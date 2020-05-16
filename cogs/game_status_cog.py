@@ -14,12 +14,23 @@ class GameStatusCog(Cog):
 
     @command(aliases=["sgs"])
     async def show_game_status(self, ctx: context) -> None:
+        """コマンド:現在のゲームステータスを表示
+
+        :param ctx:
+        :return:
+        """
         await ctx.send("show_game_statusコマンドが実行されました")
         status: str = self.bot.game.status
         await ctx.send(f"現在のゲームのステータスは{status}です")
 
     @command(aliases=["setgs"])
     async def set_game_status(self, ctx: context, status: str = "") -> None:
+        """コマンド：ゲームステータスを引数statusに設定
+
+        :param ctx:
+        :param status:ゲームのステータス。GameStatusConst参照
+        :return:
+        """
         status_list: List[str] = [x.value for x in GameStatusConst]
 
         if status == "":
