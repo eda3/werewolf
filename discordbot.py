@@ -1,5 +1,5 @@
 import os
-from logging import DEBUG, INFO, Logger
+from logging import Logger
 
 from discord.ext.commands import Bot, Context, command
 
@@ -20,6 +20,12 @@ def main() -> None:
     # コマンド「;ping」を追加
     # コマンドの内容は ping()を参照
     bot.add_command(ping)
+
+    extension_list = [
+        "cogs.players_cog",
+    ]
+    for extension in extension_list:
+        bot.load_extension(name=extension)
 
     # bot実行
     bot.run(token)
