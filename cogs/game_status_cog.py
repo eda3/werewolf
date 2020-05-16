@@ -1,9 +1,9 @@
+import sys
 from typing import List
-
-from discord.ext.commands import Bot, Cog, command, context
 
 from cogs.utils.const import GameStatusConst
 from cogs.utils.werewolf_bot import WerewolfBot
+from discord.ext.commands import Bot, Cog, command, context
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -26,6 +26,19 @@ class GameStatusCog(Cog):
 
         self.bot.game.status = GameStatusConst.WAITING.value
         await ctx.send("参加者の募集を開始しました。")
+
+    @command()
+    async def start(self, ctx: context) -> None:
+        """人狼ゲーム開始"""
+        # メソッド名取得
+        method: str = sys._getframe().f_code.co_name
+
+        if self.bot.game.status == GameStatusConst.NOTHING.value:
+            await ctx.send(f"まだ募集されておりません。{method}コマンドは使えません")
+            return
+
+        self.bot.game.status = GameStatusConst.PLAYING.value
+        await ctx.send(f"ゲームのステータスを{self.bot.game.status}に変更しました")
 
     @command(aliases=["sgs"])
     async def show_game_status(self, ctx: context) -> None:
