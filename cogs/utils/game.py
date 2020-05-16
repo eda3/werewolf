@@ -7,5 +7,4 @@ logger = setup_logger(__name__)
 class Game:
     def __init__(self) -> None:
         logger.debug("Gameクラス init")
-        logger.debug(f"{GameStatus.NOTHING=}")
-        self.status = GameStatus.NOTHING
+        self.status = GameStatus.NOTHING.value

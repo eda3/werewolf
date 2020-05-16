@@ -15,7 +15,7 @@ class GameStatusCog(Cog):
     @command(aliases=["sgs"])
     async def show_game_status(self, ctx: context) -> None:
         await ctx.send("show_game_statusコマンドが実行されました")
-        status: str = self.bot.game.status.value
+        status: str = self.bot.game.status
         await ctx.send(f"現在のゲームのステータスは{status}です")
 
     @command(aliases=["setgs"])
@@ -30,6 +30,7 @@ class GameStatusCog(Cog):
             await ctx.send(f"引数が間違っています。引数は以下からえらんでください。{status_list}")
             return
 
+        self.bot.game.status = status
         await ctx.send(f"ゲームのステータスを{status}にセットしました")
 
 
