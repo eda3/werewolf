@@ -5,4 +5,3 @@ from cogs.utils.game import Game
 
 class WerewolfBot(Bot):
     game: Game
-
