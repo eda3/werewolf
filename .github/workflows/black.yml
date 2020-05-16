@@ -13,5 +13,4 @@ jobs:
           python-version: 3.8
       - uses: dschep/install-poetry-action@v1.3
       - run: poetry install --no-interaction
-      -
-        run: poetry run black --check --diff .
+      - run: poetry run black --check --diff .
