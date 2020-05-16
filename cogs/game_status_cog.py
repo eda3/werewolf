@@ -1,9 +1,8 @@
 from discord.ext.commands import Bot, Cog, command, context
 
 from cogs.utils.const import GameStatus
-
-
 from setup_logger import setup_logger
+from Typing import List
 
 logger = setup_logger(__name__)
 
@@ -21,20 +20,14 @@ class GameStatusCog(Cog):
 
     @command(aliases=["setgs"])
     async def set_game_status(self, ctx: context, status: str = "") -> None:
-        status_list = [x.value for x in GameStatus]
+        status_list: List[str] = [x.value for x in GameStatus]
 
         if status == "":
-            await ctx.send(
-                "引数がありません。引数は以下からえらんでください。"
-                f"{status_list}"
-            )
+            await ctx.send("引数がありません。引数は以下からえらんでください。" f"{status_list}")
             return
 
         if status not in status_list:
-            await ctx.send(
-                "引数が間違っています。引数は以下からえらんでください。"
-                f"{status_list}"
-            )
+            await ctx.send("引数が間違っています。引数は以下からえらんでください。" f"{status_list}")
             return
 
         await ctx.send(f"あなたが選んだ引数は{status}です")
