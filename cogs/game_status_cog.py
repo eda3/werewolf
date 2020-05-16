@@ -1,6 +1,6 @@
 from discord.ext.commands import Bot, Cog, command, context
 
-from cogs.utils.const import GameStatus
+from cogs.utils.const import GameStatusConst
 from setup_logger import setup_logger
 from typing import List
 
@@ -20,7 +20,7 @@ class GameStatusCog(Cog):
 
     @command(aliases=["setgs"])
     async def set_game_status(self, ctx: context, status: str = "") -> None:
-        status_list: List[str] = [x.value for x in GameStatus]
+        status_list: List[str] = [x.value for x in GameStatusConst]
 
         if status == "":
             await ctx.send(f"引数がありません。引数は以下からえらんでください。 {status_list}")
