@@ -16,7 +16,8 @@ class GameStatusCog(Cog):
     @command(aliases=["sgs"])
     async def show_game_status(self, ctx: context) -> None:
         await ctx.send("show_game_statusコマンドが実行されました")
-        await ctx.send(f"現在のゲームのステータスは{self.bot.game.status}です")
+        status: str = self.bot.game.status.value
+        await ctx.send(f"現在のゲームのステータスは{status}です")
 
 
 def setup(bot: Bot) -> None:
