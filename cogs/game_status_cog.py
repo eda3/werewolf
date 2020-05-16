@@ -1,8 +1,9 @@
+from typing import List
+
 from discord.ext.commands import Bot, Cog, command, context
 
 from cogs.utils.const import GameStatusConst
 from setup_logger import setup_logger
-from typing import List
 
 logger = setup_logger(__name__)
 
@@ -11,6 +12,19 @@ class GameStatusCog(Cog):
     def __init__(self, bot: Bot):
         logger.debug("GameStatusCogのinit")
         self.bot = bot
+
+    @command(aliases=["cre"])
+    async def create(self, ctx: context) -> None:
+        """人狼ゲーム作成(エイリアス[cre])"""
+        if self.bot.game.status == GameStatusConst.PLAYING.value:
+            await ctx.send("現在ゲーム中です。createコマンドは使えません")
+            return
+        if self.bot.game.status == GameStatusConst.WAITING.value:
+            await ctx.send("現在参加者募集中です")
+            return
+
+        self.bot.game.status = GameStatusConst.WAITING.value
+        await ctx.send("参加者の募集を開始しました。")
 
     @command(aliases=["sgs"])
     async def show_game_status(self, ctx: context) -> None:
