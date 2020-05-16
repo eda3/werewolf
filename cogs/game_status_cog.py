@@ -3,15 +3,16 @@ from typing import List
 from discord.ext.commands import Bot, Cog, command, context
 
 from cogs.utils.const import GameStatusConst
+from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
 
 
 class GameStatusCog(Cog):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: WerewolfBot):
         logger.debug("GameStatusCogのinit")
-        self.bot = bot
+        self.bot: WerewolfBot = bot
 
     @command(aliases=["cre"])
     async def create(self, ctx: context) -> None:

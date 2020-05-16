@@ -4,6 +4,7 @@ from logging import Logger
 from discord.ext.commands import Bot, Context, command
 
 from cogs.utils.game import Game
+from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 
@@ -12,8 +13,8 @@ def main() -> None:
     logger.info("START")
 
     # 接頭辞を「;」に設定
-    bot: Bot = Bot(command_prefix=";")
-    bot.game: Game = Game()
+    bot: WerewolfBot = WerewolfBot(command_prefix=";")
+    bot.game = Game()
     logger.debug(bot)
 
     # 環境変数DISCORD_BOT_TOKENからBOTのトークンを取得

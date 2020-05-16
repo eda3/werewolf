@@ -5,14 +5,15 @@ from discord.member import Member
 
 from cogs.utils.const import GameStatusConst
 from cogs.utils.player import Player
+from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
 
 
 class PlayersCog(Cog):
-    def __init__(self, bot: Bot):
-        self.bot = bot
+    def __init__(self, bot: WerewolfBot):
+        self.bot: WerewolfBot = bot
 
     @command()
     async def join(self, ctx: context) -> None:
