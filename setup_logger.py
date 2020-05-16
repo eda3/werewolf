@@ -9,8 +9,8 @@ def setup_logger(name: str = "") -> Logger:
     sh: StreamHandler = StreamHandler()
     sh.setLevel(DEBUG)
     sh_formatter = Formatter(
-        "%(asctime)s - %(filename)s - %(funcName)s() - "
-        "%(levelname)s - %(message)s", "%Y%m%d %H%M%S"
+        "%(asctime)s - %(filename)s - %(funcName)s() - " "%(levelname)s - %(message)s",
+        "%Y%m%d %H%M%S",
     )
     sh.setFormatter(sh_formatter)
 
