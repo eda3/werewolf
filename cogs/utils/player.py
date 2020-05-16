@@ -1,4 +1,5 @@
 from setup_logger import setup_logger
+from discord import Member
 
 logger = setup_logger(__name__)
 
@@ -10,6 +11,7 @@ class Player:
         id: DiscordユーザID
     """
 
-    def __init__(self, discord_id: int) -> None:
+    def __init__(self, member: Member) -> None:
         logger.debug("Playerクラス init")
-        self.id: int = discord_id
+        self.id: int = member.id
+        self.name: str = member.display_name

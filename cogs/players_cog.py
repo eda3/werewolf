@@ -28,11 +28,19 @@ class PlayersCog(Cog):
             await ctx.send(f"現在ゲーム進行中です。{method}コマンドは使えません")
             return
 
-        player: Player = Player(member.id)
+        player: Player = Player(member)
         self.bot.game.join_player(player)
         await ctx.send(f"{member}がjoinしました")
-        for p in self.bot.game.player_list:
-            logger.debug(f"{p=}")
+
+    @command(aliases=["spl"])
+    async def show_player_list(self, ctx: context) -> None:
+        """参加者一覧を表示
+
+        :param ctx:
+        :return:
+        """
+        p_list = [x.name for x in self.bot.game.player_list]
+        await ctx.send(f"ゲームの参加者は{p_list}です")
 
 
 def setup(bot: Bot) -> None:
