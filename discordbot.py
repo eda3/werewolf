@@ -3,8 +3,8 @@ from logging import Logger
 
 from discord.ext.commands import Bot, Context, command
 
-from setup_logger import setup_logger
 from cogs.utils.game import Game
+from setup_logger import setup_logger
 
 
 def main() -> None:

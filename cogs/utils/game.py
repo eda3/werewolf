@@ -1,5 +1,5 @@
-from setup_logger import setup_logger
 from cogs.utils.const import GameStatusConst
+from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
 
