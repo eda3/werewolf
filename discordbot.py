@@ -4,6 +4,7 @@ from logging import Logger
 from discord.ext.commands import Bot, Context, command
 
 from setup_logger import setup_logger
+from cogs.utils.game import Game
 
 
 def main() -> None:
@@ -12,6 +13,7 @@ def main() -> None:
 
     # 接頭辞を「;」に設定
     bot: Bot = Bot(command_prefix=";")
+    bot.game: Game = Game()
     logger.debug(bot)
 
     # 環境変数DISCORD_BOT_TOKENからBOTのトークンを取得
