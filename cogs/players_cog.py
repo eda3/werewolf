@@ -17,6 +17,11 @@ class PlayersCog(Cog):
 
     @command()
     async def join(self, ctx: context) -> None:
+        """ゲームに参加する。募集中のみ有効。
+
+        :param ctx:
+        :return:
+        """
         # メソッド名取得
         method: str = sys._getframe().f_code.co_name
 
