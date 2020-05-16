@@ -2,7 +2,7 @@ from discord.ext.commands import Bot, Cog, command, context
 
 from cogs.utils.const import GameStatus
 from setup_logger import setup_logger
-from Typing import List
+from typing import List
 
 logger = setup_logger(__name__)
 
@@ -30,7 +30,7 @@ class GameStatusCog(Cog):
             await ctx.send(f"引数が間違っています。引数は以下からえらんでください。{status_list}")
             return
 
-        await ctx.send(f"あなたが選んだ引数は{status}です")
+        await ctx.send(f"ゲームのステータスを{status}にセットしました")
 
 
 def setup(bot: Bot) -> None:
