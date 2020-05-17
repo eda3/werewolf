@@ -1,8 +1,11 @@
+import random
 import sys
 from typing import List
 
 from cogs.utils.const import GameStatusConst
+from cogs.utils.roles import simple
 from cogs.utils.werewolf_bot import WerewolfBot
+from discord import utils
 from discord.ext.commands import Bot, Cog, command, context
 from setup_logger import setup_logger
 
@@ -27,6 +30,14 @@ class GameStatusCog(Cog):
         self.bot.game.status = GameStatusConst.WAITING.value
         await ctx.send("参加者の募集を開始しました。")
 
+    async def fuga(self):
+        print("fuga")
+
+    @command()
+    async def hoge(self, ctx):
+        logger.debug(f"hoge")
+        await self.fuga()
+
     @command()
     async def start(self, ctx: context) -> None:
         """人狼ゲーム開始"""
@@ -39,6 +50,33 @@ class GameStatusCog(Cog):
 
         self.bot.game.status = GameStatusConst.PLAYING.value
         await ctx.send(f"ゲームのステータスを{self.bot.game.status}に変更しました")
+
+        # 役職配布
+        n = len(self.bot.game.player_list)
+        role = simple[n]
+        role_list = random.sample(role, n)
+
+        for i, player in enumerate(self.bot.game.player_list):
+            name = player.name
+            role = role_list[i]
+            await ctx.send(f"{name}の役職は||{role}||です")
+
+        await self.set_game_roll(ctx)
+
+    async def set_game_roll(self, ctx: context) -> None:
+        player_list = self.bot.game.player_list
+        n = len(player_list)
+        if 0 == n:
+            await ctx.send("参加者は0人です")
+            return
+
+        for i, player in enumerate(player_list):
+            d_roll_name = "join0" + str(i)
+            d_roll = utils.get(ctx.guild.roles, name=d_roll_name)
+
+            await player.d_member.add_roles(d_roll)
+            s = f"{player.name}さんは鍵チャンネル{d_roll_name}にアクセス出来るようになりました"
+            await ctx.send(s)
 
     @command(aliases=["sgs"])
     async def show_game_status(self, ctx: context) -> None:
