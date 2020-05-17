@@ -30,14 +30,6 @@ class GameStatusCog(Cog):
         self.bot.game.status = GameStatusConst.WAITING.value
         await ctx.send("参加者の募集を開始しました。")
 
-    async def fuga(self):
-        print("fuga")
-
-    @command()
-    async def hoge(self, ctx):
-        logger.debug(f"hoge")
-        await self.fuga()
-
     @command()
     async def start(self, ctx: context) -> None:
         """人狼ゲーム開始"""
