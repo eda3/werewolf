@@ -45,6 +45,10 @@ class GameStatusCog(Cog):
         self.bot.game.status = GameStatusConst.PLAYING.value
         await ctx.send(f"ゲームのステータスを{self.bot.game.status}に変更しました")
 
+        await self.set_game_role(ctx)
+        await self.set_channel_role(ctx)
+
+    async def set_game_role(self, ctx: Context) -> None:
         # 役職配布
         n: int = len(self.bot.game.player_list)
         role: list = simple[n]
@@ -63,8 +67,6 @@ class GameStatusCog(Cog):
             # 各Playerのプロパティに情報設定
             self.bot.game.player_list[i].channel = channel
             self.bot.game.player_list[i].game_role = role
-
-        await self.set_channel_role(ctx)
 
     async def set_channel_role(self, ctx: Context) -> None:
         player_list: list[Player] = self.bot.game.player_list
