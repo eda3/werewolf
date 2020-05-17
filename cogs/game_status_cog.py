@@ -6,7 +6,7 @@ from cogs.utils.const import GameStatusConst, join_channel_const
 from cogs.utils.roles import simple
 from cogs.utils.werewolf_bot import WerewolfBot
 from discord import utils
-from discord.ext.commands import Bot, Cog, command, context
+from discord.ext.commands import Bot, Cog, Context, command
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -18,7 +18,7 @@ class GameStatusCog(Cog):
         self.bot: WerewolfBot = bot
 
     @command(aliases=["cre"])
-    async def create(self, ctx: context) -> None:
+    async def create(self, ctx: Context) -> None:
         """人狼ゲーム作成(エイリアス[cre])"""
         if self.bot.game.status == GameStatusConst.PLAYING.value:
             await ctx.send("現在ゲーム中です。createコマンドは使えません")
@@ -31,7 +31,7 @@ class GameStatusCog(Cog):
         await ctx.send("参加者の募集を開始しました。")
 
     @command()
-    async def start(self, ctx: context) -> None:
+    async def start(self, ctx: Context) -> None:
         """人狼ゲーム開始"""
         # メソッド名取得
         method: str = sys._getframe().f_code.co_name
@@ -44,21 +44,21 @@ class GameStatusCog(Cog):
         await ctx.send(f"ゲームのステータスを{self.bot.game.status}に変更しました")
 
         # 役職配布
-        n = len(self.bot.game.player_list)
-        role = simple[n]
-        role_list = random.sample(role, n)
+        n: int = len(self.bot.game.player_list)
+        role: str = simple[n]
+        role_list: list[str] = random.sample(role, n)
 
         for i, player in enumerate(self.bot.game.player_list):
-            name = player.name
-            role = role_list[i]
+            name: str = player.name
+            role: str = role_list[i]
 
             # 送信先チャンネル取得
-            channel = ctx.guild.get_channel(join_channel_const[i])
+            channel: Channel = ctx.guild.get_channel(join_channel_const[i])
             await channel.send(f"{name}の役職は{role}です")
 
         await self.set_game_roll(ctx)
 
-    async def set_game_roll(self, ctx: context) -> None:
+    async def set_game_roll(self, ctx: Context) -> None:
         player_list = self.bot.game.player_list
         n = len(player_list)
         if 0 == n:
@@ -74,7 +74,7 @@ class GameStatusCog(Cog):
             await ctx.send(s)
 
     @command(aliases=["sgs"])
-    async def show_game_status(self, ctx: context) -> None:
+    async def show_game_status(self, ctx: Context) -> None:
         """コマンド:現在のゲームステータスを表示
 
         :param ctx:
@@ -85,7 +85,7 @@ class GameStatusCog(Cog):
         await ctx.send(f"現在のゲームのステータスは{status}です")
 
     @command(aliases=["setgs"])
-    async def set_game_status(self, ctx: context, status: str = "") -> None:
+    async def set_game_status(self, ctx: Context, status: str = "") -> None:
         """コマンド：ゲームステータスを引数statusに設定
 
         :param ctx:

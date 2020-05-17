@@ -1,6 +1,6 @@
 import sys
 
-from discord.ext.commands import Bot, Cog, command, context
+from discord.ext.commands import Bot, Cog, Context, command
 from discord.member import Member
 
 from cogs.utils.const import GameStatusConst
@@ -16,7 +16,7 @@ class PlayersCog(Cog):
         self.bot: WerewolfBot = bot
 
     @command()
-    async def join(self, ctx: context) -> None:
+    async def join(self, ctx: Context) -> None:
         """ゲームに参加する。募集中のみ有効。
 
         :param ctx:
@@ -38,7 +38,7 @@ class PlayersCog(Cog):
         await ctx.send(f"{member}がjoinしました")
 
     @command(aliases=["spl"])
-    async def show_player_list(self, ctx: context) -> None:
+    async def show_player_list(self, ctx: Context) -> None:
         """参加者一覧を表示
 
         :param ctx:
