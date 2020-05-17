@@ -54,8 +54,9 @@ class GameStatusCog(Cog):
             role: str = role_list[i]
 
             # 送信先チャンネル取得
+            channel_name: str = "join0" + str(i)
             channel: Channel = ctx.guild.get_channel(join_channel_const[i])
-            await channel.send(f"{name}の役職は{role}です")
+            await channel.send(f"{channel_name}に送信。{name}の役職は{role}です")
 
         await self.set_game_role(ctx)
 
@@ -73,6 +74,30 @@ class GameStatusCog(Cog):
             await player.d_member.add_roles(d_role)
             s: str = f"{player.name}さんは鍵チャンネル{d_role_name}にアクセス出来るようになりました"
             await ctx.send(s)
+
+    @command()
+    async def end(self, ctx: Context) -> None:
+        """人狼ゲーム終了"""
+
+        # 秘匿チャンネルの役職解除
+        await self.reset_discord_role(ctx)
+        # 参加者一覧を削除
+        self.bot.game.player_list = []
+
+    @staticmethod
+    async def reset_discord_role(ctx: Context) -> None:
+        """秘匿チャンネルの役職解除
+
+        :param ctx:
+        :return:
+        """
+        for i in range(len(join_channel_const)):
+            d_role_name: str = "join0" + str(i)
+            d_role: Role = utils.get(ctx.guild.roles, name=d_role_name)
+            for member in d_role.members:
+                logger.debug(f"{member.display_name=}")
+                logger.debug(f"{d_role_name=}")
+                await member.remove_roles(d_role)
 
     @command(aliases=["sgs"])
     async def show_game_status(self, ctx: Context) -> None:
