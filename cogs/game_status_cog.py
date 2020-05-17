@@ -47,7 +47,7 @@ class GameStatusCog(Cog):
 
         # 役職配布
         n: int = len(self.bot.game.player_list)
-        role: str = simple[n]
+        role: list = simple[n]
         role_list: list[str] = random.sample(role, n)
 
         for i, player in enumerate(self.bot.game.player_list):
