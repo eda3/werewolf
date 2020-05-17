@@ -1,4 +1,5 @@
 from discord import Member
+from discord.channel import TextChannel
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -16,3 +17,5 @@ class Player:
         self.d_member: Member = member
         self.id: int = member.id
         self.name: str = member.display_name
+        self.channel: TextChannel
+        self.role: str

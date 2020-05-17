@@ -3,6 +3,7 @@ import sys
 from typing import List
 
 from discord import Role, utils
+from discord.channel import TextChannel
 from discord.ext.commands import Bot, Cog, Context, command
 
 from cogs.utils.const import GameStatusConst, join_channel_const
@@ -55,7 +56,8 @@ class GameStatusCog(Cog):
 
             # 送信先チャンネル取得
             channel_name: str = "join0" + str(i)
-            channel: Channel = ctx.guild.get_channel(join_channel_const[i])
+            channel: TextChannel = ctx.guild.get_channel(join_channel_const[i])
+            logger.debug(f"{type(channel)=}")
             await channel.send(f"{channel_name}に送信。{name}の役職は{role}です")
 
         await self.set_game_role(ctx)
