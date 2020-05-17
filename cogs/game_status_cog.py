@@ -2,7 +2,7 @@ import random
 import sys
 from typing import List
 
-from discord import utils
+from discord import Role, utils
 from discord.ext.commands import Bot, Cog, Context, command
 
 from cogs.utils.const import GameStatusConst, join_channel_const
@@ -60,18 +60,18 @@ class GameStatusCog(Cog):
         await self.set_game_role(ctx)
 
     async def set_game_role(self, ctx: Context) -> None:
-        player_list = self.bot.game.player_list
-        n = len(player_list)
+        player_list: list[Player] = self.bot.game.player_list
+        n: int = len(player_list)
         if 0 == n:
             await ctx.send("参加者は0人です")
             return
 
         for i, player in enumerate(player_list):
-            d_role_name = "join0" + str(i)
-            d_role = utils.get(ctx.guild.roles, name=d_role_name)
+            d_role_name: str = "join0" + str(i)
+            d_role: Role = utils.get(ctx.guild.roles, name=d_role_name)
 
             await player.d_member.add_roles(d_role)
-            s = f"{player.name}さんは鍵チャンネル{d_role_name}にアクセス出来るようになりました"
+            s: str = f"{player.name}さんは鍵チャンネル{d_role_name}にアクセス出来るようになりました"
             await ctx.send(s)
 
     @command(aliases=["sgs"])
