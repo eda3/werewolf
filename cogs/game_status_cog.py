@@ -60,9 +60,9 @@ class GameStatusCog(Cog):
             logger.debug(f"{type(channel)=}")
             await channel.send(f"{channel_name}に送信。{name}の役職は{role}です")
 
-        await self.set_game_role(ctx)
+        await self.set_channel_role(ctx)
 
-    async def set_game_role(self, ctx: Context) -> None:
+    async def set_channel_role(self, ctx: Context) -> None:
         player_list: list[Player] = self.bot.game.player_list
         n: int = len(player_list)
         if 0 == n:
