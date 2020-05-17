@@ -2,7 +2,7 @@ import random
 import sys
 from typing import List
 
-from cogs.utils.const import GameStatusConst
+from cogs.utils.const import GameStatusConst, join_channel_const
 from cogs.utils.roles import simple
 from cogs.utils.werewolf_bot import WerewolfBot
 from discord import utils
@@ -51,7 +51,10 @@ class GameStatusCog(Cog):
         for i, player in enumerate(self.bot.game.player_list):
             name = player.name
             role = role_list[i]
-            await ctx.send(f"{name}の役職は||{role}||です")
+
+            # 送信先チャンネル取得
+            channel = ctx.guild.get_channel(join_channel_const[i])
+            await channel.send(f"{name}の役職は{role}です")
 
         await self.set_game_roll(ctx)
 
