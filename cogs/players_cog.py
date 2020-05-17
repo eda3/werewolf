@@ -44,8 +44,9 @@ class PlayersCog(Cog):
         :param ctx:
         :return:
         """
-        p_list = [x.name for x in self.bot.game.player_list]
-        await ctx.send(f"ゲームの参加者は{p_list}です")
+        p_list = [x for x in self.bot.game.player_list]
+        pname_list = [x.name for x in p_list]
+        await ctx.send(f"ゲームの参加者は{pname_list}です")
 
 
 def setup(bot: Bot) -> None:
