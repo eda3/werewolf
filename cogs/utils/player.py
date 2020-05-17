@@ -13,6 +13,6 @@ class Player:
 
     def __init__(self, member: Member) -> None:
         logger.debug("Playerクラス init")
-        self.d_member: Menber = member
+        self.d_member: Member = member
         self.id: int = member.id
         self.name: str = member.display_name
