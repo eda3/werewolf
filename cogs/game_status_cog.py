@@ -60,6 +60,10 @@ class GameStatusCog(Cog):
             logger.debug(f"{type(channel)=}")
             await channel.send(f"{channel_name}に送信。{name}の役職は{role}です")
 
+            # 各Playerのプロパティに情報設定
+            self.bot.game.player_list[i].channel = channel
+            self.bot.game.player_list[i].game_role = role
+
         await self.set_channel_role(ctx)
 
     async def set_channel_role(self, ctx: Context) -> None:
@@ -97,7 +101,6 @@ class GameStatusCog(Cog):
             d_role_name: str = "join0" + str(i)
             d_role: Role = utils.get(ctx.guild.roles, name=d_role_name)
             for member in d_role.members:
-                logger.debug(f"{member.display_name=}")
                 logger.debug(f"{d_role_name=}")
                 await member.remove_roles(d_role)
 

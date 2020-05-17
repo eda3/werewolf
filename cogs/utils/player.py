@@ -18,4 +18,4 @@ class Player:
         self.id: int = member.id
         self.name: str = member.display_name
         self.channel: TextChannel
-        self.role: str
+        self.game_role: str = ""
