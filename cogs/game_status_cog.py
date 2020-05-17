@@ -2,11 +2,12 @@ import random
 import sys
 from typing import List
 
+from discord import utils
+from discord.ext.commands import Bot, Cog, Context, command
+
 from cogs.utils.const import GameStatusConst, join_channel_const
 from cogs.utils.roles import simple
 from cogs.utils.werewolf_bot import WerewolfBot
-from discord import utils
-from discord.ext.commands import Bot, Cog, Context, command
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -56,9 +57,9 @@ class GameStatusCog(Cog):
             channel: Channel = ctx.guild.get_channel(join_channel_const[i])
             await channel.send(f"{name}の役職は{role}です")
 
-        await self.set_game_roll(ctx)
+        await self.set_game_role(ctx)
 
-    async def set_game_roll(self, ctx: Context) -> None:
+    async def set_game_role(self, ctx: Context) -> None:
         player_list = self.bot.game.player_list
         n = len(player_list)
         if 0 == n:
@@ -66,11 +67,11 @@ class GameStatusCog(Cog):
             return
 
         for i, player in enumerate(player_list):
-            d_roll_name = "join0" + str(i)
-            d_roll = utils.get(ctx.guild.roles, name=d_roll_name)
+            d_role_name = "join0" + str(i)
+            d_role = utils.get(ctx.guild.roles, name=d_role_name)
 
-            await player.d_member.add_roles(d_roll)
-            s = f"{player.name}さんは鍵チャンネル{d_roll_name}にアクセス出来るようになりました"
+            await player.d_member.add_roles(d_role)
+            s = f"{player.name}さんは鍵チャンネル{d_role_name}にアクセス出来るようになりました"
             await ctx.send(s)
 
     @command(aliases=["sgs"])
