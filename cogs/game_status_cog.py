@@ -1,14 +1,15 @@
+import asyncio
 import random
 import sys
 from typing import List
 
-from discord import Role, utils
-from discord.channel import TextChannel
-from discord.ext.commands import Bot, Cog, Context, command
-
-from cogs.utils.const import GameStatusConst, join_channel_const
+from cogs.utils.const import GameStatusConst, emoji_list, join_channel_const
+from cogs.utils.player import Player
 from cogs.utils.roles import simple
 from cogs.utils.werewolf_bot import WerewolfBot
+from discord import Member, Message, Reaction, Role, utils
+from discord.channel import TextChannel
+from discord.ext.commands import Bot, Cog, Context, command
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -51,9 +52,9 @@ class GameStatusCog(Cog):
     async def set_game_role(self, ctx: Context) -> None:
         # 役職配布
         n: int = len(self.bot.game.player_list)
-        role: list = simple[n]
-        role_list: list[str] = random.sample(role, n)
+        role_list: List[str] = random.sample(simple[n], n)
 
+        tasks = []
         for i, player in enumerate(self.bot.game.player_list):
             name: str = player.name
             role: str = role_list[i]
@@ -68,8 +69,32 @@ class GameStatusCog(Cog):
             self.bot.game.player_list[i].channel = channel
             self.bot.game.player_list[i].game_role = role
 
+            if role == "村":
+                tasks.append(asyncio.create_task(self.mura(player, channel)))
+
+        for task in tasks:
+            await task
+
+    async def mura(self, player: Player, channel: TextChannel) -> None:
+        await channel.send(
+            "あなたは村人です。特殊な能力はありません。"
+            "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
+            "メッセージを確認したら、 :zero: の絵文字リアクションをクリックしてください"
+        )
+
+        m_id: int = channel.last_message_id
+        last_message: Message = await channel.fetch_message(m_id)
+        await last_message.add_reaction(emoji_list[0])
+
+        def my_check(reaction: Reaction, user: Member) -> bool:
+            logger.debug(f"{user.name=}")
+            return user == player.d_member and str(reaction.emoji) == emoji_list[0]
+
+        await self.bot.wait_for("reaction_add", check=my_check)
+        await channel.send(f"{player.name}が :zero: を押したのを確認しました")
+
     async def set_channel_role(self, ctx: Context) -> None:
-        player_list: list[Player] = self.bot.game.player_list
+        player_list: List[Player] = self.bot.game.player_list
         n: int = len(player_list)
         if 0 == n:
             await ctx.send("参加者は0人です")
