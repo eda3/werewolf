@@ -3,13 +3,14 @@ import random
 import sys
 from typing import List
 
+from discord import Role, utils
+from discord.channel import TextChannel
+from discord.ext.commands import Bot, Cog, Context, command
+
 from cogs.utils.const import GameStatusConst, join_channel_const
 from cogs.utils.player import Player
 from cogs.utils.roles import Villager, Werewolf, simple
 from cogs.utils.werewolf_bot import WerewolfBot
-from discord import Role, utils
-from discord.channel import TextChannel
-from discord.ext.commands import Bot, Cog, Context, command
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -19,6 +20,9 @@ class GameStatusCog(Cog):
     def __init__(self, bot: WerewolfBot):
         logger.debug("GameStatusCogのinit")
         self.bot: WerewolfBot = bot
+
+        # 参加者がリアクション絵文字を押した数
+        self.react_num = 0
 
     @command(aliases=["cre"])
     async def create(self, ctx: Context) -> None:
@@ -85,8 +89,26 @@ class GameStatusCog(Cog):
                 asyncio.create_task(player.game_role.action(self, player, channel))
             )
 
+        # リアクションチェック用
+        tasks.append(asyncio.create_task((self.check_react(ctx))))
+
         for task in tasks:
-            await task
+            self.react_num += await task
+
+        await ctx.send("**全員がリアクション絵文字を押したのを確認しました**")
+        await ctx.send("**5秒後に人狼ゲームを開始します。**")
+        await asyncio.sleep(5)
+        await ctx.send("**ゲーム開始です。それぞれの役職は自分にあった行動をしてください**")
+
+    async def check_react(self, ctx: Context) -> int:
+        # リアクション数がプレイヤ数より下回ってる場合催促する
+        while self.react_num < len(self.bot.game.player_list):
+            await asyncio.sleep(5)
+            remaining_num = len(self.bot.game.player_list) - self.react_num
+            await ctx.send(f"{remaining_num}人がまだリアクション絵文字を押してないです")
+
+        # self.check_numの加算でエラーにしなようにするため
+        return 0
 
     async def set_channel_role(self, ctx: Context) -> None:
         player_list: List[Player] = self.bot.game.player_list
