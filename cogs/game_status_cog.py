@@ -65,9 +65,9 @@ class GameStatusCog(Cog):
         # テキストのロールをクラスに変換
         for i in range(len(role_list)):
             if role_list[i] == "村":
-                role_list[i] = Villager
+                role_list[i] = Villager(self.bot)
             if role_list[i] == "狼":
-                role_list[i] = Werewolf
+                role_list[i] = Werewolf(self.bot)
 
         # 鍵チャンネルへの権限を設定
         await self.set_channel_role(ctx)
@@ -90,7 +90,7 @@ class GameStatusCog(Cog):
 
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
             role_action_list.append(
-                asyncio.create_task(player.game_role.action(self, player, channel))
+                asyncio.create_task(player.game_role.action(player, channel))
             )
 
         # リアクションチェック用

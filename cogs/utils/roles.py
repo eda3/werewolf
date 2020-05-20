@@ -1,8 +1,11 @@
+from typing import List
+
 from discord import Member, Message, Reaction
 from discord.channel import TextChannel
 
 from cogs.utils.const import emoji_list
 from cogs.utils.player import Player
+from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -17,12 +20,9 @@ logger = setup_logger(__name__)
 
 simple = {
     1: "村",
-    # 2: "村狼",
-    # 3: "村村狼",
-    # 4: "村狼占狼",
-    2: "狼狼",
-    3: "狼狼狼",
-    4: "狼狼狼狼",
+    2: "村狼",
+    3: "村狼狼",
+    4: "村狼占狼",
     5: "村村狼占狼",
     6: "村村村狼占狼",
     7: "村村村村狼占狼",
@@ -43,8 +43,8 @@ class Villager:
 
     name = "村人"
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, bot: WerewolfBot) -> None:
+        self.bot: Werewolf = bot
 
     async def action(self, player: Player, channel: TextChannel) -> int:
         await channel.send(
@@ -52,7 +52,6 @@ class Villager:
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
             "メッセージを確認したら、 :zero: の絵文字リアクションをクリックしてください"
         )
-
         m_id: int = channel.last_message_id
         last_message: Message = await channel.fetch_message(m_id)
         await last_message.add_reaction(emoji_list[0])
@@ -68,17 +67,29 @@ class Villager:
 class Werewolf:
     """人狼"""
 
-    name = "狼"
+    # name = "狼"
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, bot: WerewolfBot) -> None:
+        self.bot: WerewolfBot = bot
+        self.name = "狼"
 
     async def action(self, player: Player, channel: TextChannel) -> int:
+
         first_night_message = (
             "あなたは人狼です。勝利条件は村人サイド（村人、占い師、怪盗）を吊ることです。"
             "メッセージを確認したら、 :zero: の絵文字リアクションをクリックしてください。"
         )
         await channel.send(first_night_message)
+
+        # リストから人狼一覧を抽出
+        player_list: List[Player] = self.bot.game.player_list
+        werewolf_list: List[str] = []
+        for p in player_list:
+            if p.game_role.name == "狼":
+                werewolf_list.append(p.name)
+
+        text = f"今回のゲームの人狼は{werewolf_list}です"
+        await channel.send(text)
 
         m_id: int = channel.last_message_id
         last_message: Message = await channel.fetch_message(m_id)
