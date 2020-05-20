@@ -67,8 +67,6 @@ class Villager:
 class Werewolf:
     """人狼"""
 
-    # name = "狼"
-
     def __init__(self, bot: WerewolfBot) -> None:
         self.bot: WerewolfBot = bot
         self.name = "狼"
