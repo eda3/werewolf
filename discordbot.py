@@ -13,8 +13,7 @@ def main() -> None:
     logger.info("START")
 
     # 接頭辞を「;」に設定
-    bot: WerewolfBot = WerewolfBot(command_prefix=";")
-    bot.game = Game()
+    bot: WerewolfBot = WerewolfBot(Game())
     logger.debug(bot)
 
     # 環境変数DISCORD_BOT_TOKENからBOTのトークンを取得
