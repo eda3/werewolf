@@ -24,7 +24,7 @@ class GameStatusCog(Cog):
         # 参加者がリアクション絵文字を押した数
         self.react_num = 0
 
-    @command(aliases=["cre"])
+    @command(aliases=["cre", "c"])
     async def create(self, ctx: Context) -> None:
         """人狼ゲーム作成(エイリアス[cre])"""
         if self.bot.game.status == GameStatusConst.PLAYING.value:
@@ -37,7 +37,7 @@ class GameStatusCog(Cog):
         self.bot.game.status = GameStatusConst.WAITING.value
         await ctx.send("参加者の募集を開始しました。")
 
-    @command()
+    @command(aliases=["sta", "s"])
     async def start(self, ctx: Context) -> None:
         """人狼ゲーム開始"""
         # メソッド名取得

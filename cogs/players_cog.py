@@ -15,7 +15,7 @@ class PlayersCog(Cog):
     def __init__(self, bot: WerewolfBot):
         self.bot: WerewolfBot = bot
 
-    @command()
+    @command(aliases=["j"])
     async def join(self, ctx: Context) -> None:
         """ゲームに参加する。募集中のみ有効。
 
