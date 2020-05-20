@@ -9,7 +9,7 @@ from discord.ext.commands import Bot, Cog, Context, command
 
 from cogs.utils.const import GameStatusConst, join_channel_const
 from cogs.utils.player import Player
-from cogs.utils.roles import Villager, Werewolf, simple
+from cogs.utils.roles import simple
 from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
@@ -60,14 +60,10 @@ class GameStatusCog(Cog):
     async def set_game_role(self, ctx: Context) -> None:
         # 役職配布
         n: int = len(self.bot.game.player_list)
-        role_list: List[str] = random.sample(simple[n], n)
+        role_list = random.sample(simple[n], n)
 
-        # テキストのロールをクラスに変換
-        for i in range(len(role_list)):
-            if role_list[i] == "村":
-                role_list[i] = Villager(self.bot)
-            if role_list[i] == "狼":
-                role_list[i] = Werewolf(self.bot)
+        for i, role in enumerate(role_list):
+            role_list[i] = role(self.bot)
 
         # 鍵チャンネルへの権限を設定
         await self.set_channel_role(ctx)
@@ -81,12 +77,11 @@ class GameStatusCog(Cog):
             # 送信先チャンネル取得
             channel_name: str = "join0" + str(i)
             channel: TextChannel = ctx.guild.get_channel(join_channel_const[i])
-            logger.debug(f"{type(channel)=}")
             await channel.send(f"{channel_name}に送信。{name}の役職は{role.name}です")
 
             # 各Playerのプロパティに情報設定
-            self.bot.game.player_list[i].channel = channel
-            self.bot.game.player_list[i].game_role = role
+            player.channel = channel
+            player.game_role = role
 
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
             role_action_list.append(
@@ -97,15 +92,16 @@ class GameStatusCog(Cog):
         role_action_list.append(asyncio.create_task((self.check_react(ctx))))
 
         for role_action in role_action_list:
-            self.react_num += await role_action
+            num = await role_action
+            self.react_num += num
 
     async def check_react(self, ctx: Context) -> int:
         # リアクション数がプレイヤ数より下回ってる場合催促する
         while self.react_num < len(self.bot.game.player_list):
             remaining_num = len(self.bot.game.player_list) - self.react_num
             await ctx.send(f"{remaining_num}人がまだリアクション絵文字を押してないです")
-            await asyncio.sleep(5)
-        await ctx.send(f"**全員がリアクション絵文字を押したのを確認しました**")
+            await asyncio.sleep(15)
+        await ctx.send("**全員がリアクション絵文字を押したのを確認しました**")
 
         # self.check_numの加算でエラーにしなようにするため
         return 0
@@ -144,7 +140,6 @@ class GameStatusCog(Cog):
             d_role_name: str = "join0" + str(i)
             d_role: Role = utils.get(ctx.guild.roles, name=d_role_name)
             for member in d_role.members:
-                logger.debug(f"{d_role_name=}")
                 await member.remove_roles(d_role)
 
     @command(aliases=["sgs"])
