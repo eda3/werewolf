@@ -51,14 +51,12 @@ class GameStatusCog(Cog):
         await ctx.send(f"ゲームのステータスを{self.bot.game.status}に変更しました")
 
         await self.set_game_role(ctx)
-        await self.set_channel_role(ctx)
 
         # wait_for()処理が終わった後に実行される
         await ctx.send("**全員がリアクション絵文字を押したのを確認しました**")
         await ctx.send("**5秒後に人狼ゲームを開始します。**")
         await asyncio.sleep(5)
         await ctx.send("**ゲーム開始です。それぞれの役職は自分にあった行動をしてください**")
-
 
     async def set_game_role(self, ctx: Context) -> None:
         # 役職配布
