@@ -17,7 +17,7 @@ class Villager:
     name = "村人"
 
     def __init__(self, bot: WerewolfBot) -> None:
-        self.bot: Werewolf = bot
+        self.bot: WerewolfBot = bot
 
     async def action(self, player: Player, channel: TextChannel) -> int:
         await channel.send(
@@ -32,6 +32,7 @@ class Villager:
         def my_check(reaction: Reaction, user: Member) -> bool:
             return user == player.d_member and str(reaction.emoji) == emoji_list[0]
 
+        logger.debug(f"{dir(self.bot)=}")
         await self.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が :zero: を押したのを確認しました")
         return 1
@@ -69,6 +70,7 @@ class Werewolf:
         def my_check(reaction: Reaction, user: Member) -> bool:
             return user == player.d_member and str(reaction.emoji) == emoji_list[0]
 
+        logger.debug(f"{dir(self.bot)=}")
         await self.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が :zero: を押したのを確認しました")
         return 1
