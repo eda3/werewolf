@@ -18,4 +18,13 @@ class Player:
         self.id: int = member.id
         self.name: str = member.display_name
         self.channel: TextChannel
-        self.game_role: str = ""
+        self._game_role = None
+
+    @property
+    def game_role(self):
+        return self._game_role
+
+    @game_role.setter
+    def game_role(self, role):
+        self._game_role = role
+
