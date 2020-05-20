@@ -74,7 +74,7 @@ class GameStatusCog(Cog):
         await self.set_channel_role(ctx)
 
         # 各参加者にゲーム役職を追加
-        tasks = []
+        role_action_list = []
         for i, player in enumerate(self.bot.game.player_list):
             name: str = player.name
             role = role_list[i]
@@ -90,15 +90,15 @@ class GameStatusCog(Cog):
             self.bot.game.player_list[i].game_role = role
 
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
-            tasks.append(
+            role_action_list.append(
                 asyncio.create_task(player.game_role.action(self, player, channel))
             )
 
         # リアクションチェック用
-        tasks.append(asyncio.create_task((self.check_react(ctx))))
+        role_action_list.append(asyncio.create_task((self.check_react(ctx))))
 
-        for task in tasks:
-            self.react_num += await task
+        for role_action in role_action_list:
+            self.react_num += await role_action
 
     async def check_react(self, ctx: Context) -> int:
         # リアクション数がプレイヤ数より下回ってる場合催促する
