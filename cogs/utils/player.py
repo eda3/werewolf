@@ -25,6 +25,6 @@ class Player:
         return self._game_role
 
     @game_role.setter
-    def game_role(self, role):
+    def game_role(self, role) -> None:
         self._game_role = role
 

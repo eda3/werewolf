@@ -50,9 +50,14 @@ class GameStatusCog(Cog):
         self.bot.game.status = GameStatusConst.PLAYING.value
         await ctx.send(f"ゲームのステータスを{self.bot.game.status}に変更しました")
 
+        # 参加者に役職と鍵チャンネル権限設定
         await self.set_game_role(ctx)
 
+        # ロールごとのアクション実行
+        await self.role_action_exec(ctx)
+
         # wait_for()処理が終わった後に実行される
+        await asyncio.sleep(1)
         await ctx.send("**5秒後に人狼ゲームを開始します。**")
         await asyncio.sleep(5)
         await ctx.send("**ゲーム開始です。それぞれの役職は自分にあった行動をしてください**")
@@ -69,7 +74,6 @@ class GameStatusCog(Cog):
         await self.set_channel_role(ctx)
 
         # 各参加者にゲーム役職を追加
-        role_action_list = []
         for i, player in enumerate(self.bot.game.player_list):
             name: str = player.name
             role = role_list[i]
@@ -83,14 +87,18 @@ class GameStatusCog(Cog):
             player.channel = channel
             player.game_role = role
 
+    async def role_action_exec(self, ctx: Context) -> None:
+        role_action_list = []
+        for player in self.bot.game.player_list:
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
             role_action_list.append(
-                asyncio.create_task(player.game_role.action(player, channel))
+                asyncio.create_task(player.game_role.action(player, player.channel))
             )
 
         # リアクションチェック用
         role_action_list.append(asyncio.create_task((self.check_react(ctx))))
 
+        # weit_for()を含むrole_action()を並列実行
         for role_action in role_action_list:
             num = await role_action
             self.react_num += num
