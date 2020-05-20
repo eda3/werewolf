@@ -53,7 +53,6 @@ class GameStatusCog(Cog):
         await self.set_game_role(ctx)
 
         # wait_for()処理が終わった後に実行される
-        await ctx.send("**全員がリアクション絵文字を押したのを確認しました**")
         await ctx.send("**5秒後に人狼ゲームを開始します。**")
         await asyncio.sleep(5)
         await ctx.send("**ゲーム開始です。それぞれの役職は自分にあった行動をしてください**")
@@ -103,9 +102,10 @@ class GameStatusCog(Cog):
     async def check_react(self, ctx: Context) -> int:
         # リアクション数がプレイヤ数より下回ってる場合催促する
         while self.react_num < len(self.bot.game.player_list):
-            await asyncio.sleep(5)
             remaining_num = len(self.bot.game.player_list) - self.react_num
             await ctx.send(f"{remaining_num}人がまだリアクション絵文字を押してないです")
+            await asyncio.sleep(5)
+        await ctx.send(f"**全員がリアクション絵文字を押したのを確認しました**")
 
         # self.check_numの加算でエラーにしなようにするため
         return 0
