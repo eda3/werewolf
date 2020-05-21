@@ -65,10 +65,10 @@ class GameStatusCog(Cog):
     async def set_game_role(self, ctx: Context) -> None:
         # 役職配布
         n: int = len(self.bot.game.player_list)
-        role_list = random.sample(simple[n], n)
-
-        for i, role in enumerate(role_list):
-            role_list[i] = role(self.bot)
+        role_class_list = random.sample(simple[n], n)
+        role_list = []
+        for role in role_class_list:
+            role_list.append(role(self.bot))
 
         # 鍵チャンネルへの権限を設定
         await self.set_channel_role(ctx)
