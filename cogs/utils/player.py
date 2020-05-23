@@ -1,5 +1,6 @@
 from discord import Member
 from discord.channel import TextChannel
+
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -27,4 +28,3 @@ class Player:
     @game_role.setter
     def game_role(self, role) -> None:
         self._game_role = role
-
