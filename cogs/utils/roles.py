@@ -24,7 +24,7 @@ class Villager:
         await channel.send(
             "あなたは**__村人__**です。特殊な能力はありません。"
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
-            "メッセージを確認したら、 :zero: の絵文字リアクションをクリックしてください"
+            f"メッセージを確認したら、 {emoji_list[0]} の絵文字リアクションをクリックしてください"
         )
         m_id: int = channel.last_message_id
         last_message: Message = await channel.fetch_message(m_id)
@@ -51,7 +51,7 @@ class Werewolf:
 
         first_night_message = (
             "あなたは**__人狼__**(人狼サイド)です。勝利条件は村人サイド（村人、占い師、怪盗）を吊ることです。"
-            "メッセージを確認したら、 :zero: の絵文字リアクションをクリックしてください。"
+            f"メッセージを確認したら、 {emoji_list[0]} の絵文字リアクションをクリックしてください"
         )
         await channel.send(first_night_message)
 
@@ -138,7 +138,7 @@ class Thief:
         await channel.send(
             "あなたは**__怪盗__**(村人サイド)です。特定の人の役職と自分の役職をすりかえることが出来ます"
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
-            "メッセージを確認したら、 :zero: の絵文字リアクションをクリックしてください"
+            f"メッセージを確認したら、 {emoji_list[0]} の絵文字リアクションをクリックしてください"
         )
         m_id: int = channel.last_message_id
         last_message: Message = await channel.fetch_message(m_id)
