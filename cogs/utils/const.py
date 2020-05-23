@@ -38,3 +38,8 @@ emoji_list = [
     "9⃣",
     "🔟",
 ]
+
+
+class SideConst(Enum):
+    WHITE = "村人陣営(白)"
+    BLACK = "人狼陣営(黒)"

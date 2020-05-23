@@ -3,7 +3,7 @@ from typing import List
 from discord import Member, Message, Reaction
 from discord.channel import TextChannel
 
-from cogs.utils.const import emoji_list
+from cogs.utils.const import SideConst, emoji_list
 from cogs.utils.player import Player
 from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
@@ -18,6 +18,7 @@ class Villager:
 
     def __init__(self, bot: WerewolfBot) -> None:
         self.bot: WerewolfBot = bot
+        self.side = SideConst.WHITE
 
     async def action(self, player: Player, channel: TextChannel) -> int:
         await channel.send(
@@ -44,6 +45,7 @@ class Werewolf:
     def __init__(self, bot: WerewolfBot) -> None:
         self.bot: WerewolfBot = bot
         self.name = "人狼"
+        self.side = SideConst.BLACK
 
     async def action(self, player: Player, channel: TextChannel) -> int:
 
@@ -82,22 +84,45 @@ class FortuneTeller:
     def __init__(self, bot: WerewolfBot) -> None:
         self.bot: WerewolfBot = bot
         self.name = "占い師"
+        self.side = SideConst.WHITE
 
     async def action(self, player: Player, channel: TextChannel) -> int:
         await channel.send(
             "あなたは**__占い師__**(村人サイド)です。特定の人を占い、村人サイドか人狼サイドか占うことができます"
-            "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
-            "メッセージを確認したら、 :zero: の絵文字リアクションをクリックしてください"
+            "村の中に潜む人狼を吊りあげ、勝利に導きましょう。占う人物を選択してください。"
         )
+
+        # 占い対象を選択
+        p_list = [x for x in self.bot.game.player_list if x is not player]
+        text = ""
+        choice_emoji = []
+        for emoji, p in zip(emoji_list, p_list):
+            choice_emoji.append(emoji)
+            text += f"{emoji} {p.name}"
+        await channel.send(text)
+
         m_id: int = channel.last_message_id
         last_message: Message = await channel.fetch_message(m_id)
-        await last_message.add_reaction(emoji_list[0])
+        for emoji in choice_emoji:
+            await last_message.add_reaction(emoji)
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user == player.d_member and str(reaction.emoji) == emoji_list[0]
+            return user == player.d_member and str(reaction.emoji) in choice_emoji
 
-        await self.bot.wait_for("reaction_add", check=my_check)
-        await channel.send(f"{player.name}が :zero: を押したのを確認しました")
+        react_emoji, react_user = await self.bot.wait_for(
+            "reaction_add", check=my_check
+        )
+        await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
+
+        # リアクション絵文字から、プレイヤを逆引き
+        p_name: str = ""
+        p_side: SideConst = SideConst.WHITE
+        for i, emoji in enumerate(choice_emoji):
+            if emoji == react_emoji.emoji:
+                p_name = p_list[i].name
+                p_side = p_list[i].game_role.side
+        await channel.send(f"占い結果：{p_name}は{p_side.value}です。")
+
         return 1
 
 
@@ -107,6 +132,7 @@ class Thief:
     def __init__(self, bot: WerewolfBot) -> None:
         self.bot: WerewolfBot = bot
         self.name = "怪盗"
+        self.side = SideConst.WHITE
 
     async def action(self, player: Player, channel: TextChannel) -> int:
         await channel.send(
@@ -136,8 +162,7 @@ simple = {
     # 3: 村村占狼盗
     3: [Villager, Villager, FortuneTeller, Werewolf, Thief],
     # 4: 村村占狼狼盗
-    # 4: [Villager, Villager, FortuneTeller, Werewolf, Werewolf, Thief],
-    4: [Werewolf, Werewolf, FortuneTeller, Werewolf, Werewolf, Thief],
+    4: [Villager, Villager, FortuneTeller, Werewolf, Werewolf, Thief],
     # 5: 村村村占狼狼盗
     5: [Villager, Villager, Villager, FortuneTeller, Werewolf, Werewolf, Thief],
 }
