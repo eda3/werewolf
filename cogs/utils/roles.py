@@ -50,7 +50,7 @@ class Werewolf:
     async def action(self, player: Player, channel: TextChannel) -> int:
 
         first_night_message = (
-            "あなたは**__人狼__**(人狼サイド)です。勝利条件は村人サイド（村人、占い師、怪盗）を吊ることです。"
+            "あなたは**__人狼__**(人狼陣営)です。勝利条件は村人陣営（村人、占い師、怪盗）を吊ることです。"
             f"メッセージを確認したら、 {emoji_list[0]} の絵文字リアクションをクリックしてください"
         )
         await channel.send(first_night_message)
@@ -88,7 +88,7 @@ class FortuneTeller:
 
     async def action(self, player: Player, channel: TextChannel) -> int:
         await channel.send(
-            "あなたは**__占い師__**(村人サイド)です。特定の人を占い、村人サイドか人狼サイドか占うことができます"
+            "あなたは**__占い師__**(村人陣営)です。特定の人を占い、村人陣営か人狼陣営か占うことができます"
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。占う人物を選択してください。"
         )
 
@@ -136,7 +136,7 @@ class Thief:
 
     async def action(self, player: Player, channel: TextChannel) -> int:
         await channel.send(
-            "あなたは**__怪盗__**(村人サイド)です。特定の人の役職と自分の役職をすりかえることが出来ます"
+            "あなたは**__怪盗__**(村人陣営)です。特定の人の役職と自分の役職をすりかえることが出来ます"
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
             f"メッセージを確認したら、 {emoji_list[0]} の絵文字リアクションをクリックしてください"
         )
