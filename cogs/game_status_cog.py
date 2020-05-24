@@ -24,6 +24,12 @@ class GameStatusCog(Cog):
         # 参加者がリアクション絵文字を押した数
         self.react_num = 0
 
+        # 参加者がリアクション絵文字を押した数
+        self.react_num = 0
+
+        # 議論時間
+        self.discussion_time = 10
+
     @command(aliases=["cre", "c"])
     async def create(self, ctx: Context) -> None:
         """人狼ゲーム作成(エイリアス[cre])"""
@@ -61,6 +67,13 @@ class GameStatusCog(Cog):
         await ctx.send("**5秒後に人狼ゲームを開始します。**")
         await asyncio.sleep(5)
         await ctx.send("**ゲーム開始です。それぞれの役職は自分にあった行動をしてください**")
+        await asyncio.sleep(1)
+        await ctx.send(f"**議論時間は{self.discussion_time}秒です**")
+        await asyncio.sleep(self.discussion_time)
+        await ctx.send("**(デバッグモード)ゲーム終了です**")
+        # デバッグ用
+        for p in self.bot.game.player_list:
+            await ctx.send(f"{p.name}の役職は{p.after_game_role.name}でした")
 
     async def set_game_role(self, ctx: Context) -> None:
         # 役職配布
@@ -86,6 +99,8 @@ class GameStatusCog(Cog):
             # 各Playerのプロパティに情報設定
             player.channel = channel
             player.game_role = role
+            # 怪盗に交換された後のゲームロール
+            player.after_game_role = role
 
     async def role_action_exec(self, ctx: Context) -> None:
         role_action_list = []
