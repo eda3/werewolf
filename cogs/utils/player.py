@@ -24,6 +24,7 @@ class Player:
         self.id: int = member.id
         self.name: str = member.display_name
         self.channel: TextChannel
+        self.vote_count: int = 0
 
     @property
     def game_role(self) -> GameRole:

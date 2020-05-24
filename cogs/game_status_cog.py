@@ -1,10 +1,9 @@
 import asyncio
 import random
 import sys
-from typing import List, TypeVar
+from typing import List
 
 from discord import Role, utils
-from discord.channel import TextChannel
 from discord.ext.commands import Bot, Cog, Context, command
 
 from cogs.utils.const import GameStatusConst, join_channel_const
@@ -29,7 +28,7 @@ class GameStatusCog(Cog):
         self.react_num = 0
 
         # 議論時間
-        self.discussion_time = 10
+        self.discussion_time = 1
 
     @command(aliases=["cre", "c"])
     async def create(self, ctx: Context) -> None:
@@ -72,8 +71,17 @@ class GameStatusCog(Cog):
         await ctx.send(f"**議論時間は{self.discussion_time}秒です**")
         await asyncio.sleep(self.discussion_time)
         await ctx.send("**(デバッグモード)ゲーム終了です**")
+        await asyncio.sleep(1)
+        await ctx.send("**各自、投票を開始してください**")
+
+        # ロールごとのアクション実行
+        await self.vote_exec(ctx)
+        await asyncio.sleep(1)
+        await ctx.send("**投票が完了しました**")
+
         # デバッグ用
         for p in self.bot.game.player_list:
+            await ctx.send(f"{p.name}の投票数は{p.vote_count}でした")
             await ctx.send(f"{p.name}の役職は{p.after_game_role.name}でした")
 
     async def set_game_role(self, ctx: Context) -> None:
@@ -94,7 +102,9 @@ class GameStatusCog(Cog):
 
             # 送信先チャンネル取得
             channel_name: str = "join0" + str(i)
-            channel: TextChannel = ctx.guild.get_channel(join_channel_const[i])
+            for c in ctx.guild.channels:
+                if c.name == channel_name:
+                    channel = c
             await channel.send(f"{channel_name}に送信。{name}の役職は{role.name}です")
 
             # 各Playerのプロパティに情報設定
@@ -114,7 +124,23 @@ class GameStatusCog(Cog):
         # リアクションチェック用
         role_action_list.append(asyncio.create_task((self.check_react(ctx))))
 
-        # weit_for()を含むrole_action()を並列実行
+        # wait_for()を含むrole_action()を並列実行
+        for role_action in role_action_list:
+            num = await role_action
+            self.react_num += num
+
+    async def vote_exec(self, ctx: Context) -> None:
+        role_action_list = []
+        for player in self.bot.game.player_list:
+            # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
+            role_action_list.append(
+                asyncio.create_task(player.game_role.vote(player, player.channel))
+            )
+
+        # リアクションチェック用
+        role_action_list.append(asyncio.create_task((self.check_react(ctx))))
+
+        # wait_for()を含むrole_action()を並列実行
         for role_action in role_action_list:
             num = await role_action
             self.react_num += num

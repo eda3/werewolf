@@ -1,6 +1,4 @@
-from abc import ABCMeta, abstractmethod
 from typing import List
-
 from discord import Emoji, Member, Message, Reaction
 from discord.channel import TextChannel
 from discord.ext.commands import Bot
