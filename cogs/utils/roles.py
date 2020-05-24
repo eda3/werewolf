@@ -6,15 +6,16 @@ from discord.channel import TextChannel
 from discord.ext.commands import Bot
 
 from cogs.utils.const import SideConst, emoji_list
+from cogs.utils.gamerole import GameRole
 from cogs.utils.player import Player
 from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
 
-
+"""
 class GameRole(metaclass=ABCMeta):
-    """各役職の抽象クラス"""
+    各役職の抽象クラス
 
     def __init__(self, bot: WerewolfBot) -> None:
         self.bot: WerewolfBot
@@ -22,14 +23,16 @@ class GameRole(metaclass=ABCMeta):
         self.side = SideConst.WHITE
 
     @abstractmethod
-    async def action(self, player: Player, channel: TextChannel) -> int:
+    async def action(self, pl, channel: TextChannel) -> int:
         pass
+"""
 
 
 class Villager(GameRole):
     """村人"""
 
     def __init__(self, bot: WerewolfBot) -> None:
+        super().__init__(bot)
         self.bot: WerewolfBot = bot
         self.name = "村人"
         self.side = SideConst.WHITE
@@ -47,7 +50,6 @@ class Villager(GameRole):
         def my_check(reaction: Reaction, user: Member) -> bool:
             return user == player.d_member and str(reaction.emoji) == emoji_list[0]
 
-        logger.debug(f"{dir(self.bot)=}")
         await self.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が :zero: を押したのを確認しました")
         return 1
@@ -57,6 +59,7 @@ class Werewolf(GameRole):
     """人狼"""
 
     def __init__(self, bot: WerewolfBot) -> None:
+        super().__init__(bot)
         self.bot: WerewolfBot = bot
         self.name = "人狼"
         self.side = SideConst.BLACK
@@ -95,6 +98,7 @@ class FortuneTeller(GameRole):
     """占い師"""
 
     def __init__(self, bot: WerewolfBot) -> None:
+        super().__init__(bot)
         self.bot: WerewolfBot = bot
         self.name = "占い師"
         self.side = SideConst.WHITE
@@ -106,7 +110,7 @@ class FortuneTeller(GameRole):
         )
 
         # 占い対象を選択
-        choice_player = await select_player(self, player, channel)
+        choice_player = await select_player(self.bot, player, channel)
 
         name = choice_player.name
         side = choice_player.game_role.side.value
@@ -119,6 +123,7 @@ class Thief(GameRole):
     """怪盗"""
 
     def __init__(self, bot: WerewolfBot) -> None:
+        super().__init__(bot)
         self.bot: WerewolfBot = bot
         self.name = "怪盗"
         self.side = SideConst.WHITE
@@ -148,7 +153,7 @@ class Thief(GameRole):
 
 async def select_player(bot: Bot, player: Player, channel: TextChannel) -> Player:
     # 対象を選択
-    p_list: List[Player] = [x for x in bot.game.player_list if x is not player]
+    p_list = [x for x in bot.game.player_list if x is not player]
     text: str = ""
     choice_emoji: List[Emoji] = []
     for emoji, p in zip(emoji_list, p_list):

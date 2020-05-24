@@ -1,5 +1,5 @@
 from cogs.utils.const import GameStatusConst
-from cogs.utils.player import Player
+# from cogs.utils import player
 from cogs.utils.player_list import PlayerList
 from setup_logger import setup_logger
 
@@ -12,5 +12,3 @@ class Game:
         self.status = GameStatusConst.NOTHING.value
         self.player_list: PlayerList = PlayerList()
 
-    def join_player(self, player: Player) -> None:
-        self.player_list.append(player)

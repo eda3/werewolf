@@ -34,7 +34,7 @@ class PlayersCog(Cog):
             return
 
         player: Player = Player(member)
-        self.bot.game.join_player(player)
+        self.bot.game.player_list.append(player)
         await ctx.send(f"{member}がjoinしました")
 
     @command(aliases=["spl"])

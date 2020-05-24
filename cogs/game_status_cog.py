@@ -1,13 +1,14 @@
 import asyncio
 import random
 import sys
-from typing import List
+from typing import List, TypeVar
 
 from discord import Role, utils
 from discord.channel import TextChannel
 from discord.ext.commands import Bot, Cog, Context, command
 
 from cogs.utils.const import GameStatusConst, join_channel_const
+from cogs.utils.gamerole import GameRole
 from cogs.utils.player import Player
 from cogs.utils.roles import simple
 from cogs.utils.werewolf_bot import WerewolfBot
@@ -79,7 +80,7 @@ class GameStatusCog(Cog):
         # 役職配布
         n: int = len(self.bot.game.player_list)
         role_class_list = random.sample(simple[n], n)
-        role_list = []
+        role_list: List[GameRole] = []
         for role in role_class_list:
             role_list.append(role(self.bot))
 
@@ -150,7 +151,7 @@ class GameStatusCog(Cog):
         # 秘匿チャンネルの役職解除
         await self.reset_discord_role(ctx)
         # 参加者一覧を削除
-        self.bot.game.player_list = []
+        self.bot.game.player_list.clear()
 
     @staticmethod
     async def reset_discord_role(ctx: Context) -> None:
