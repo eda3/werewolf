@@ -1,7 +1,9 @@
+from abc import ABCMeta, abstractmethod
 from typing import List
 
 from discord import Emoji, Member, Message, Reaction
 from discord.channel import TextChannel
+from discord.ext.commands import Bot
 
 from cogs.utils.const import SideConst, emoji_list
 from cogs.utils.player import Player
@@ -11,13 +13,25 @@ from setup_logger import setup_logger
 logger = setup_logger(__name__)
 
 
-class Villager:
-    """村人"""
+class GameRole(metaclass=ABCMeta):
+    """各役職の抽象クラス"""
 
-    name = "村人"
+    def __init__(self, bot: WerewolfBot) -> None:
+        self.bot: WerewolfBot
+        self.name = ""
+        self.side = SideConst.WHITE
+
+    @abstractmethod
+    async def action(self, player: Player, channel: TextChannel) -> int:
+        pass
+
+
+class Villager(GameRole):
+    """村人"""
 
     def __init__(self, bot: WerewolfBot) -> None:
         self.bot: WerewolfBot = bot
+        self.name = "村人"
         self.side = SideConst.WHITE
 
     async def action(self, player: Player, channel: TextChannel) -> int:
@@ -39,7 +53,7 @@ class Villager:
         return 1
 
 
-class Werewolf:
+class Werewolf(GameRole):
     """人狼"""
 
     def __init__(self, bot: WerewolfBot) -> None:
@@ -77,7 +91,7 @@ class Werewolf:
         return 1
 
 
-class FortuneTeller:
+class FortuneTeller(GameRole):
     """占い師"""
 
     def __init__(self, bot: WerewolfBot) -> None:
@@ -101,7 +115,7 @@ class FortuneTeller:
         return 1
 
 
-class Thief:
+class Thief(GameRole):
     """怪盗"""
 
     def __init__(self, bot: WerewolfBot) -> None:
@@ -117,13 +131,12 @@ class Thief:
         )
 
         # 役職交換する自分以外のプレイヤーを選択
-        choice_player = await select_player(self, player, channel)
+        choice_player = await select_player(self.bot, player, channel)
 
         # 選択プレイヤーと自分の役職を交換
         temp_role = player.game_role
         player.after_game_role = choice_player.game_role
         choice_player.after_game_role = temp_role
-
 
         await channel.send(
             f"あなたは{choice_player.name}と役職交換しました。"
@@ -133,9 +146,9 @@ class Thief:
         return 1
 
 
-async def select_player(self, player: Player, channel: TextChannel) -> Player:
+async def select_player(bot: Bot, player: Player, channel: TextChannel) -> Player:
     # 対象を選択
-    p_list: List[Player] = [x for x in self.bot.game.player_list if x is not player]
+    p_list: List[Player] = [x for x in bot.game.player_list if x is not player]
     text: str = ""
     choice_emoji: List[Emoji] = []
     for emoji, p in zip(emoji_list, p_list):
@@ -151,9 +164,7 @@ async def select_player(self, player: Player, channel: TextChannel) -> Player:
     def my_check(reaction: Reaction, user: Member) -> bool:
         return user == player.d_member and str(reaction.emoji) in choice_emoji
 
-    react_emoji, react_user = await self.bot.wait_for(
-        "reaction_add", check=my_check
-    )
+    react_emoji, react_user = await bot.wait_for("reaction_add", check=my_check)
     await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
 
     # リアクション絵文字から、プレイヤを逆引き
