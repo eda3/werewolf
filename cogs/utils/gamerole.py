@@ -13,4 +13,3 @@ class GameRole(metaclass=ABCMeta):
         self.bot: WerewolfBot
         self.name = ""
         self.side = SideConst.WHITE
-

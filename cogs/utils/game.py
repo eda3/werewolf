@@ -1,4 +1,5 @@
 from cogs.utils.const import GameStatusConst
+
 # from cogs.utils import player
 from cogs.utils.player_list import PlayerList
 from setup_logger import setup_logger
@@ -11,4 +12,3 @@ class Game:
         logger.debug("Gameクラス init")
         self.status = GameStatusConst.NOTHING.value
         self.player_list: PlayerList = PlayerList()
-
