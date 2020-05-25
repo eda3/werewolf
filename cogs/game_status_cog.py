@@ -6,7 +6,7 @@ from typing import List
 from discord import Role, utils
 from discord.ext.commands import Bot, Cog, Context, command
 
-from cogs.utils.const import GameStatusConst, join_channel_const
+from cogs.utils.const import GameStatusConst, SideConst, join_channel_const
 from cogs.utils.gamerole import GameRole
 from cogs.utils.player import Player
 from cogs.utils.roles import simple
@@ -78,7 +78,27 @@ class GameStatusCog(Cog):
         await self.vote_exec(ctx)
         await asyncio.sleep(1)
         await ctx.send("**投票が完了しました**")
+        await asyncio.sleep(3)
+        await ctx.send("**今回は……**")
+        await asyncio.sleep(1)
 
+        p_list = self.bot.game.player_list
+        # 投票数が全員1かどうかをチェック
+        if await self.is_vote_count_same_for_all(p_list):
+            # プレイヤ内に人狼陣営がいるかチェック
+            if await self.check_black_side_in_players(p_list):
+                await ctx.send("**投票数全員1。人狼陣営が残っているため、**")
+                await asyncio.sleep(1)
+                await ctx.send("**__人狼陣営の勝利です！__**")
+            else:
+                await ctx.send("**投票数全員1。人狼陣営は残っていないため**")
+                await asyncio.sleep(1)
+                await ctx.send("**真の平和村でした**")
+                await asyncio.sleep(1)
+                await ctx.send("**__村人陣営の勝利です！__**")
+
+        await asyncio.sleep(1)
+        await ctx.send("**====================**")
         # デバッグ用
         for p in self.bot.game.player_list:
             await ctx.send(f"{p.name}の投票数は{p.vote_count}でした")
@@ -130,6 +150,7 @@ class GameStatusCog(Cog):
             self.react_num += num
 
     async def vote_exec(self, ctx: Context) -> None:
+        self.react_num = 0
         role_action_list = []
         for player in self.bot.game.player_list:
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
@@ -150,8 +171,8 @@ class GameStatusCog(Cog):
         while self.react_num < len(self.bot.game.player_list):
             remaining_num = len(self.bot.game.player_list) - self.react_num
             await ctx.send(f"{remaining_num}人がまだリアクション絵文字を押してないです")
-            await asyncio.sleep(15)
-        await ctx.send("**全員がリアクション絵文字を押したのを確認しました**")
+            await asyncio.sleep(5)
+        await ctx.send("**全員がリアクション絵文字を押したのを確認しました ２**")
 
         # self.check_numの加算でエラーにしなようにするため
         return 0
@@ -169,6 +190,21 @@ class GameStatusCog(Cog):
             await player.d_member.add_roles(d_role)
             s: str = f"{player.name}さんは鍵チャンネル{d_role_name}にアクセス出来るようになりました"
             await ctx.send(s)
+
+    @staticmethod
+    async def is_vote_count_same_for_all(p_list: List[Player]) -> bool:
+        """平和村かどうか"""
+        vote_count_list: List[int] = [x.vote_count for x in p_list]
+
+        # 重複を排除し、全て同じ
+        return len(list(set(vote_count_list))) == 1
+
+    @staticmethod
+    async def check_black_side_in_players(player_list: List[Player]) -> bool:
+        """プレイヤ内に人狼陣営がいるかどうか"""
+
+        game_side_list = [x.game_role.side for x in player_list]
+        return SideConst.BLACK in game_side_list
 
     @command()
     async def end(self, ctx: Context) -> None:

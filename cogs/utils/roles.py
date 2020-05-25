@@ -1,4 +1,5 @@
 from typing import List
+
 from discord import Emoji, Member, Message, Reaction
 from discord.channel import TextChannel
 from discord.ext.commands import Bot
@@ -186,6 +187,9 @@ async def select_player(bot: Bot, player: Player, channel: TextChannel) -> Playe
 占: 占い師
 """
 simple = {
+    # 2: [Villager, FortuneTeller, Werewolf, Thief],
+    2: [Villager, FortuneTeller, Villager, Thief],
+    # 2: [Werewolf, Werewolf, Werewolf, Werewolf],
     # 3: 村村占狼盗
     3: [Villager, Villager, FortuneTeller, Werewolf, Thief],
     # 4: 村村占狼狼盗
