@@ -33,7 +33,7 @@ class PlayersCog(Cog):
             await ctx.send(f"現在ゲーム進行中です。{method}コマンドは使えません")
             return
 
-        player: Player = Player(member)
+        player: Player = Player(member.id, member.display_name)
         self.bot.game.player_list.append(player)
         await ctx.send(f"{member}がjoinしました")
 

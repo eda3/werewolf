@@ -1,5 +1,6 @@
 from typing import List
 
+from discord import utils
 from discord import Emoji, Member, Message, Reaction
 from discord.channel import TextChannel
 from discord.ext.commands import Bot
@@ -47,7 +48,8 @@ class Villager(GameRole):
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user == player.d_member and str(reaction.emoji) == emoji_list[0]
+            member = utils.get(self.bot.get_all_members(), id=player.id)
+            return user == member and str(reaction.emoji) == emoji_list[0]
 
         await self.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が :zero: を押したのを確認しました")
@@ -86,7 +88,8 @@ class Werewolf(GameRole):
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user == player.d_member and str(reaction.emoji) == emoji_list[0]
+            member = utils.get(bot.get_all_members(), id=player.id)
+            return user == member and str(reaction.emoji) == emoji_list[0]
 
         await self.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が :zero: を押したのを確認しました")
@@ -166,7 +169,8 @@ async def select_player(bot: Bot, player: Player, channel: TextChannel) -> Playe
         await last_message.add_reaction(emoji)
 
     def my_check(reaction: Reaction, user: Member) -> bool:
-        return user == player.d_member and str(reaction.emoji) in choice_emoji
+        member = utils.get(bot.get_all_members(), id=player.id)
+        return user == member and str(reaction.emoji) in choice_emoji
 
     react_emoji, react_user = await bot.wait_for("reaction_add", check=my_check)
     await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
@@ -187,8 +191,9 @@ async def select_player(bot: Bot, player: Player, channel: TextChannel) -> Playe
 占: 占い師
 """
 simple = {
+    1: [Villager, FortuneTeller, Werewolf],
+    2: [Villager, Villager, Villager, Villager],
     # 2: [Villager, FortuneTeller, Werewolf, Thief],
-    2: [Villager, FortuneTeller, Villager, Thief],
     # 2: [Werewolf, Werewolf, Werewolf, Werewolf],
     # 3: 村村占狼盗
     3: [Villager, Villager, FortuneTeller, Werewolf, Thief],

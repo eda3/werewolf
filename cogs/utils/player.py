@@ -18,11 +18,10 @@ class Player:
     # 怪盗役職交換用
     _after_game_role: GameRole
 
-    def __init__(self, member: Member) -> None:
+    def __init__(self, id: int, name: str) -> None:
         logger.debug("Playerクラス init")
-        self.d_member: Member = member
-        self.id: int = member.id
-        self.name: str = member.display_name
+        self.id: int = id
+        self.name: str = name
         self.channel: TextChannel
         self.vote_count: int = 0
 

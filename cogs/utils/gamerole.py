@@ -1,6 +1,6 @@
 from typing import List
 
-from discord import Emoji, Member, Message, Reaction
+from discord import Emoji, Member, Message, Reaction, utils
 from discord.channel import TextChannel
 
 from cogs.utils.const import SideConst, emoji_list
@@ -41,7 +41,8 @@ class GameRole:
             await last_message.add_reaction(emoji)
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user == player.d_member and str(reaction.emoji) in choice_emoji
+            member = utils.get(self.bot.get_all_members(), id=player.id)
+            return user == member and str(reaction.emoji) in choice_emoji
 
         react_emoji, react_user = await self.bot.wait_for(
             "reaction_add", check=my_check

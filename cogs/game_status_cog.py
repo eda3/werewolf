@@ -187,7 +187,8 @@ class GameStatusCog(Cog):
             d_role_name: str = "join0" + str(i)
             d_role: Role = utils.get(ctx.guild.roles, name=d_role_name)
 
-            await player.d_member.add_roles(d_role)
+            member = utils.get(ctx.guild.members, id=player.id)
+            await member.add_roles(d_role)
             s: str = f"{player.name}さんは鍵チャンネル{d_role_name}にアクセス出来るようになりました"
             await ctx.send(s)
 
