@@ -30,11 +30,15 @@ async def test_is_vote_count_same_for_all_test002():
 
     p2 = Player(2, "P2")
     p2.after_game_role = Villager
-    p2.vote_count = 2
+    p2.vote_count = 1
 
     p_list = [p1, p2]
 
     # 投票数が異なる場合はFalse
+    assert await GameStatusCog.is_vote_count_same_for_all(p_list) is True
+
+    p2.vote_count += 1
+
+    # 投票数が異なる場合はFalse
     assert await GameStatusCog.is_vote_count_same_for_all(p_list) is False
 
-    subprocess.call("python", shell=True)
