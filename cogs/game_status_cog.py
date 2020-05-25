@@ -204,7 +204,7 @@ class GameStatusCog(Cog):
     async def check_black_side_in_players(player_list: List[Player]) -> bool:
         """プレイヤ内に人狼陣営がいるかどうか"""
 
-        game_side_list = [x.game_role.side for x in player_list]
+        game_side_list = [x.after_game_role.side for x in player_list]
         return SideConst.BLACK in game_side_list
 
     @command()
