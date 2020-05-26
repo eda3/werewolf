@@ -1,4 +1,3 @@
-from discord import Member
 from discord.channel import TextChannel
 
 from cogs.utils.gamerole import GameRole
@@ -14,29 +13,28 @@ class Player:
         id: DiscordユーザID
     """
 
-    _game_role: GameRole
-    # 怪盗役職交換用
-    _after_game_role: GameRole
-
-    def __init__(self, id: int, name: str) -> None:
+    def __init__(self, d_id: int, name: str):
         logger.debug("Playerクラス init")
-        self.id: int = id
+        self.id: int = d_id
         self.name: str = name
         self.channel: TextChannel
         self.vote_count: int = 0
+        self.__game_role: GameRole = None
+        # 怪盗役職交換用
+        self.__after_game_role: GameRole = None
 
     @property
     def game_role(self) -> GameRole:
-        return self._game_role
+        return self.__game_role
 
     @game_role.setter
     def game_role(self, role: GameRole) -> None:
-        self._game_role = role
+        self.__game_role = role
 
     @property
     def after_game_role(self) -> GameRole:
-        return self._after_game_role
+        return self.__after_game_role
 
     @after_game_role.setter
     def after_game_role(self, role: GameRole) -> None:
-        self._after_game_role = role
+        self.__after_game_role = role
