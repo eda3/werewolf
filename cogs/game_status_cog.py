@@ -230,7 +230,7 @@ class GameStatusCog(Cog):
             sorted_voted_list.append((voted, player))
 
         logger.debug(f"{sorted_voted_list=}")
-        list.sort(sorted_voted_list, reverse=True)
+        list.sort(sorted_voted_list, key=lambda x: x[0], reverse=True)
         logger.debug(f"{sorted_voted_list=}")
 
         # 最多投票数
