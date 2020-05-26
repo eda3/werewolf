@@ -52,7 +52,7 @@ class Villager(GameRole):
             return user == member and str(reaction.emoji) == emoji_list[0]
 
         await self.bot.wait_for("reaction_add", check=my_check)
-        await channel.send(f"{player.name}が :zero: を押したのを確認しました")
+        await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
         return 1
 
 
@@ -92,7 +92,7 @@ class Werewolf(GameRole):
             return user == member and str(reaction.emoji) == emoji_list[0]
 
         await self.bot.wait_for("reaction_add", check=my_check)
-        await channel.send(f"{player.name}が :zero: を押したのを確認しました")
+        await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
         return 1
 
 

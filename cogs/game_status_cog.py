@@ -177,7 +177,7 @@ class GameStatusCog(Cog):
             remaining_num = len(self.bot.game.player_list) - self.react_num
             await ctx.send(f"{remaining_num}人がまだリアクション絵文字を押してないです")
             await asyncio.sleep(5)
-        await ctx.send("**全員がリアクション絵文字を押したのを確認しました ２**")
+        await ctx.send("**全員がリアクション絵文字を押したのを確認しました**")
 
         # self.check_numの加算でエラーにしなようにするため
         return 0
