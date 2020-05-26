@@ -97,8 +97,13 @@ class GameStatusCog(Cog):
                 await asyncio.sleep(1)
                 await ctx.send("**__村人陣営の勝利です！__**")
 
+        most_voted_players: List[Player] = await self.get_most_voted_players(p_list)
+        for mvp in most_voted_players:
+            await ctx.send(f"{mvp.name}({mvp.after_game_role.name})が吊られました")
+
         await asyncio.sleep(1)
         await ctx.send("**====================**")
+
         # デバッグ用
         for p in self.bot.game.player_list:
             await ctx.send(f"{p.name}の投票数は{p.vote_count}でした")
@@ -206,6 +211,37 @@ class GameStatusCog(Cog):
 
         game_side_list = [x.after_game_role.side for x in player_list]
         return SideConst.BLACK in game_side_list
+
+    @staticmethod
+    async def get_most_voted_players(player_list: List[Player]) -> List[Player]:
+        """一番投票されたプレイヤを返す"""
+        # 投票された数とゲーム終了後の役職を取得
+        voted_list = [x.vote_count for x in player_list]
+        logger.debug(f"{voted_list=}")
+        """
+        after_game_role_list = []
+        for player in player_list:
+            after_game_role_list.append(player.after_game_role)
+        """
+
+        sorted_voted_list = []
+        # 並び替えするために、取得した二つのリストを二次元配列にする
+        for voted, player in zip(voted_list, player_list):
+            sorted_voted_list.append((voted, player))
+
+        logger.debug(f"{sorted_voted_list=}")
+        list.sort(sorted_voted_list, reverse=True)
+        logger.debug(f"{sorted_voted_list=}")
+
+        # 最多投票数
+        most_voted_num: int = sorted_voted_list[0][0]
+        logger.debug(f"{most_voted_num=}")
+
+        # 最多投票数以外を除外
+        voted_list = [x[1] for x in sorted_voted_list if x[0] == most_voted_num]
+        logger.debug(f"{voted_list=}")
+
+        return voted_list
 
     @command()
     async def end(self, ctx: Context) -> None:
