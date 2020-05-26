@@ -191,15 +191,11 @@ async def select_player(bot: Bot, player: Player, channel: TextChannel) -> Playe
 占: 占い師
 """
 simple = {
-    1: [Villager, FortuneTeller, Werewolf],
-    2: [Villager, Villager, Villager, Villager],
-    # 2: [Villager, FortuneTeller, Werewolf, Thief],
-    # 2: [Werewolf, Werewolf, Werewolf, Werewolf],
+    2: [Villager, FortuneTeller, Werewolf, Thief],
     # 3: 村村占狼盗
     3: [Villager, Villager, FortuneTeller, Werewolf, Thief],
     # 4: 村村占狼狼盗
-    # 4: [Villager, Villager, FortuneTeller, Werewolf, Werewolf, Thief],
-    4: [FortuneTeller, Werewolf, Werewolf, Thief],
+    4: [Villager, Villager, FortuneTeller, Werewolf, Werewolf, Thief],
     # 5: 村村村占狼狼盗
     5: [Villager, Villager, Villager, FortuneTeller, Werewolf, Werewolf, Thief],
 }
