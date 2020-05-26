@@ -88,7 +88,7 @@ class Werewolf(GameRole):
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            member = utils.get(bot.get_all_members(), id=player.id)
+            member = utils.get(self.bot.get_all_members(), id=player.id)
             return user == member and str(reaction.emoji) == emoji_list[0]
 
         await self.bot.wait_for("reaction_add", check=my_check)
