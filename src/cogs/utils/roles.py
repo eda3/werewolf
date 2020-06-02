@@ -3,12 +3,12 @@ from typing import List
 from discord import utils
 from discord import Emoji, Member, Message, Reaction
 from discord.channel import TextChannel
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, Context
 
 from cogs.utils.const import SideConst, emoji_list
 from cogs.utils.gamerole import GameRole
 from cogs.utils.player import Player
-from cogs.utils.werewolf_bot import WerewolfBot
+# from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -31,13 +31,13 @@ class GameRole(metaclass=ABCMeta):
 class Villager(GameRole):
     """村人"""
 
-    def __init__(self, bot: WerewolfBot) -> None:
+    def __init__(self, bot) -> None:
         super().__init__(bot)
-        self.bot: WerewolfBot = bot
+        self.bot = bot
         self.name = "村人"
         self.side = SideConst.WHITE
 
-    async def action(self, player: Player, channel: TextChannel) -> int:
+    async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
         await channel.send(
             "あなたは**__村人__**です。特殊な能力はありません。"
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
@@ -48,10 +48,10 @@ class Villager(GameRole):
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            member = utils.get(self.bot.get_all_members(), id=player.id)
+            member = utils.get(ctx.bot.get_all_members(), id=player.id)
             return user == member and str(reaction.emoji) == emoji_list[0]
 
-        await self.bot.wait_for("reaction_add", check=my_check)
+        await ctx.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
         return 1
 
@@ -59,13 +59,13 @@ class Villager(GameRole):
 class Werewolf(GameRole):
     """人狼"""
 
-    def __init__(self, bot: WerewolfBot) -> None:
+    def __init__(self, bot) -> None:
         super().__init__(bot)
-        self.bot: WerewolfBot = bot
+        self.bot = bot
         self.name = "人狼"
         self.side = SideConst.BLACK
 
-    async def action(self, player: Player, channel: TextChannel) -> int:
+    async def action(self, ctx, player: Player, channel: TextChannel) -> int:
 
         first_night_message = (
             "あなたは**__人狼__**(人狼陣営)です。勝利条件は村人陣営（村人、占い師、怪盗）を吊ることです。"
@@ -91,7 +91,7 @@ class Werewolf(GameRole):
             member = utils.get(self.bot.get_all_members(), id=player.id)
             return user == member and str(reaction.emoji) == emoji_list[0]
 
-        await self.bot.wait_for("reaction_add", check=my_check)
+        await ctx.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
         return 1
 
@@ -99,9 +99,9 @@ class Werewolf(GameRole):
 class FortuneTeller(GameRole):
     """占い師"""
 
-    def __init__(self, bot: WerewolfBot) -> None:
+    def __init__(self, bot) -> None:
         super().__init__(bot)
-        self.bot: WerewolfBot = bot
+        self.bot= bot
         self.name = "占い師"
         self.side = SideConst.WHITE
 
@@ -124,9 +124,9 @@ class FortuneTeller(GameRole):
 class Thief(GameRole):
     """怪盗"""
 
-    def __init__(self, bot: WerewolfBot) -> None:
+    def __init__(self, bot) -> None:
         super().__init__(bot)
-        self.bot: WerewolfBot = bot
+        self.bot = bot
         self.name = "怪盗"
         self.side = SideConst.WHITE
 
@@ -184,16 +184,11 @@ async def select_player(bot: Bot, player: Player, channel: TextChannel) -> Playe
     return p_list[p_idx]
 
 
-"""
-役職編成の辞書
-村: 村人
-狼: 人狼
-占: 占い師
-"""
 simple = {
     2: [Villager, FortuneTeller, Werewolf, Thief],
     # 3: 村村占狼盗
-    3: [Villager, Villager, FortuneTeller, Werewolf, Thief],
+    # 3: [Villager, Villager, FortuneTeller, Werewolf, Thief],
+    3: [Villager, Villager, Villager, Villager, Villager],
     # 4: 村村占狼狼盗
     4: [Villager, Villager, FortuneTeller, Werewolf, Werewolf, Thief],
     # 5: 村村村占狼狼盗
