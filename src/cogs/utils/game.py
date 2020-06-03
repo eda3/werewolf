@@ -153,7 +153,6 @@ class Game:
     async def role_action_exec(self, ctx: Context) -> None:
         role_action_list = []
         for player in self.player_list:
-            logger.debug(f"{dir(player)=}")
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
             role_action_list.append(
                 asyncio.create_task(
