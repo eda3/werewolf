@@ -178,11 +178,16 @@ class Game:
             self.react_num += num
 
     async def check_react(self, ctx: Context) -> int:
-        # リアクション数がプレイヤ数より下回ってる場合催促する
+        # 経過時間
+        elapsed_time = 0
+        # 1分が経過してリアクション数がプレイヤ数より下回っている場合催促する
         while self.react_num < len(self.player_list):
-            remaining_num = len(self.player_list) - self.react_num
-            await ctx.send(f"{remaining_num}人がまだリアクション絵文字を押してないです")
-            await asyncio.sleep(5)
+            elapsed_time = elapsed_time + 1
+            await asyncio.sleep(1)
+
+            if elapsed_time % 60 == 0:
+                await ctx.send("**まだリアクション絵文字を押してない人がいます**")
+
         await ctx.send("**全員がリアクション絵文字を押したのを確認しました**")
 
         # self.check_numの加算でエラーにしなようにするため
