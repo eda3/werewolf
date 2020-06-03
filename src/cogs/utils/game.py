@@ -101,7 +101,12 @@ class Game:
 
         # デバッグ用
         for p in self.player_list:
-            await ctx.send(f"{p.name}({p.after_game_role})への投票数は{p.vote_count}でした")
+            # 怪盗に役職交換されたかどうかで文言変更
+            if p.game_role.name != p.after_game_role.name:
+                role_name = f"{p.game_role.name} -> {p.after_game_role.name}"
+            else:
+                role_name = p.after_game_role.name
+            await ctx.send(f"{p.name}({role_name})への投票数は{p.vote_count}でした")
         await ctx.send("``` ```")
 
     async def set_game_role(self, ctx: Context) -> None:
