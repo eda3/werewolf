@@ -25,7 +25,7 @@ class Game:
         self.react_num = 0
 
         # 議論時間
-        self.discussion_time = 1
+        self.discussion_time = 300
 
     async def start(self, ctx: Context) -> None:
         """人狼ゲーム開始"""
