@@ -1,13 +1,15 @@
 from __future__ import annotations
+
 import asyncio
 import random
 import sys
 from typing import List
 
 from discord import Role, utils
-from discord.ext.commands import Bot, Cog, Context, command
+from discord.ext.commands import Context
 
-from cogs.utils.const import GameStatusConst, SideConst, join_channel_const
+from cogs.utils.const import GameStatusConst, SideConst
+from cogs.utils.player import Player
 from cogs.utils.player_list import PlayerList
 from cogs.utils.roles import simple
 from setup_logger import setup_logger
@@ -114,7 +116,7 @@ class Game:
         n: int = len(self.player_list)
 
         role_class_list = random.sample(simple[n], n)
-        role_list: List[GameRole] = []
+        role_list = []
         for role in role_class_list:
             role_list.append(role(self.player_list))
 
@@ -132,7 +134,7 @@ class Game:
                 if c.name == channel_name:
                     channel = c
             # テキストセパレータ
-            await channel.send(f"``` ```")
+            await channel.send("``` ```")
             await channel.send(f"{channel_name}に送信。{name}の役職は{role.name}です")
 
             # 各Playerのプロパティに情報設定

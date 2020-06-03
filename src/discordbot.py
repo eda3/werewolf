@@ -1,7 +1,7 @@
 import os
 from logging import Logger
 
-from discord.ext.commands import Bot, Context, command
+from discord.ext.commands import Context, command
 
 from cogs.utils.game import Game
 from cogs.utils.werewolf_bot import WerewolfBot
