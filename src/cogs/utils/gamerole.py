@@ -16,6 +16,7 @@ class GameRole:
         self.side = SideConst.WHITE
 
     async def vote(self, ctx: Context, player, channel: TextChannel) -> int:
+        await channel.send("``` ```")
         await channel.send("人狼だと思う人を一人選択してください")
 
         choice_player = await self.select_player(ctx, player, channel)

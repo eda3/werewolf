@@ -101,8 +101,8 @@ class Game:
 
         # デバッグ用
         for p in self.player_list:
-            await ctx.send(f"{p.name}の投票数は{p.vote_count}でした")
-            await ctx.send(f"{p.name}の役職は{p.after_game_role.name}でした")
+            await ctx.send(f"{p.name}({p.after_game_role})への投票数は{p.vote_count}でした")
+        await ctx.send("``` ```")
 
     async def set_game_role(self, ctx: Context) -> None:
         # 役職配布
