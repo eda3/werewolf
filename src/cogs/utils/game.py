@@ -48,6 +48,7 @@ class Game:
 
         # wait_for()処理が終わった後に実行される
         await asyncio.sleep(1)
+        await ctx.send("``` ```")
         await ctx.send("**5秒後に人狼ゲームを開始します。**")
         await asyncio.sleep(5)
         await ctx.send("**ゲーム開始です。それぞれの役職は自分にあった行動をしてください**")
@@ -97,7 +98,7 @@ class Game:
             await ctx.send("**__人狼陣営の勝利です！__**")
 
         await asyncio.sleep(1)
-        await ctx.send("**====================**")
+        await ctx.send("``` ```")
 
         # デバッグ用
         for p in self.player_list:
@@ -126,6 +127,8 @@ class Game:
             for c in ctx.guild.channels:
                 if c.name == channel_name:
                     channel = c
+            # テキストセパレータ
+            await channel.send(f"``` ```")
             await channel.send(f"{channel_name}に送信。{name}の役職は{role.name}です")
 
             # 各Playerのプロパティに情報設定
