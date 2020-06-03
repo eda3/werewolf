@@ -55,7 +55,14 @@ class Game:
         await ctx.send("**ゲーム開始です。それぞれの役職は自分にあった行動をしてください**")
         await asyncio.sleep(1)
         await ctx.send(f"**議論時間は{self.discussion_time}秒です**")
-        await asyncio.sleep(self.discussion_time)
+
+        # 30秒ごとに残り時間を出力
+        while 0 < self.discussion_time:
+            await asyncio.sleep(1)
+            self.discussion_time = self.discussion_time - 1
+            if self.discussion_time % 30 == 0:
+                await ctx.send(f"**残り{self.discussion_time}秒です**")
+
         await ctx.send("**(デバッグモード)ゲーム終了です**")
         await asyncio.sleep(1)
         await ctx.send("**各自、投票を開始してください**")
