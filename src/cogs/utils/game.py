@@ -27,7 +27,6 @@ class Game:
         # 議論時間
         self.discussion_time = 1
 
-
     async def start(self, ctx: Context) -> None:
         """人狼ゲーム開始"""
         # メソッド名取得
@@ -143,7 +142,9 @@ class Game:
             logger.debug(f"{dir(player)=}")
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
             role_action_list.append(
-                asyncio.create_task(player.game_role.action(ctx, player, player.channel))
+                asyncio.create_task(
+                    player.game_role.action(ctx, player, player.channel)
+                )
             )
 
         # リアクションチェック用

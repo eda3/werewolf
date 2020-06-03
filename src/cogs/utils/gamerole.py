@@ -44,9 +44,7 @@ class GameRole:
             member = utils.get(ctx.bot.get_all_members(), id=player.id)
             return user == member and str(reaction.emoji) in choice_emoji
 
-        react_emoji, react_user = await ctx.bot.wait_for(
-            "reaction_add", check=my_check
-        )
+        react_emoji, react_user = await ctx.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
 
         # リアクション絵文字から、プレイヤを逆引き
