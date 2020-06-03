@@ -17,6 +17,10 @@ class GameStatusCog(Cog):
 
     @command(aliases=["cre", "c"])
     async def create(self, ctx: Context) -> None:
+
+        # 一度リセットする
+        await self.end(ctx)
+
         """人狼ゲーム作成(エイリアス[cre])"""
         if self.bot.game.status == GameStatusConst.PLAYING.value:
             await ctx.send("現在ゲーム中です。createコマンドは使えません")
