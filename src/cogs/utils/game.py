@@ -253,11 +253,6 @@ class Game:
         # 投票された数とゲーム終了後の役職を取得
         voted_list = [x.vote_count for x in player_list]
         logger.debug(f"{voted_list=}")
-        """
-        after_game_role_list = []
-        for player in player_list:
-            after_game_role_list.append(player.after_game_role)
-        """
 
         sorted_voted_list = []
         # 並び替えするために、取得した二つのリストを二次元配列にする
