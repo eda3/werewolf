@@ -22,6 +22,7 @@ class Player:
         self.__game_role: GameRole = None
         # 怪盗役職交換用
         self.__after_game_role: GameRole = None
+        self.vote_target = ""
 
     @property
     def game_role(self) -> GameRole:

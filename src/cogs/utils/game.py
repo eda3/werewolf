@@ -118,7 +118,7 @@ class Game:
         await asyncio.sleep(1)
         await ctx.send("``` ```")
 
-        # デバッグ用
+        # 各プレイヤ役職を表示
         for p in self.player_list:
             # 怪盗に役職交換されたかどうかで文言変更
             if p.game_role.name != p.after_game_role.name:
@@ -126,6 +126,12 @@ class Game:
             else:
                 role_name = p.after_game_role.name
             await ctx.send(f"{p.name}({role_name})への投票数は{p.vote_count}でした")
+        await asyncio.sleep(1)
+
+        # 投票先一覧表示
+        for p in self.player_list:
+            await ctx.send(f"{p.name}は{p.vote_target}に投票しました")
+
         await ctx.send(f"墓地に置いてあったカードは{self.grave_role_list}でした")
         await ctx.send("``` ```")
 

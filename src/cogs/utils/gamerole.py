@@ -21,8 +21,8 @@ class GameRole:
 
         choice_player = await self.select_player(ctx, player, channel)
 
-        name = choice_player.name
-        await channel.send(f"あなたは{name}に投票しました")
+        player.vote_target = choice_player.name
+        await channel.send(f"あなたは{player.vote_target}に投票しました")
 
         return 1
 
