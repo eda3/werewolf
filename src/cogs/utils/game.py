@@ -105,15 +105,24 @@ class Game:
                 await ctx.send(f"{mvp.name}({mvp.after_game_role.name})が吊られました")
                 await asyncio.sleep(1)
 
-            # 一番投票数が多かったプレイヤたちに人狼陣営がいれば、村人陣営の勝利
-            if await self.check_black_side_in_players(most_voted_players):
-                await ctx.send("**人狼陣営を吊ったため、**")
+            # 一番投票数が多いプレイヤに吊人がいたら吊人の一人勝ち
+            player_hanged_man = await self.check_hanged_man_in_players(
+                most_voted_players
+            )
+            if player_hanged_man:
+                await ctx.send("**吊人が吊られたため**")
                 await asyncio.sleep(1)
-                await ctx.send("**__村人陣営の勝利です！__**")
+                await ctx.send(f"**__{player_hanged_man.name}(吊人)の勝利です！__**")
             else:
-                await ctx.send("**村人陣営を吊ったため、**")
-                await asyncio.sleep(1)
-                await ctx.send("**__人狼陣営の勝利です！__**")
+                # 一番投票数が多かったプレイヤたちに人狼陣営がいれば、村人陣営の勝利
+                if await self.check_black_side_in_players(most_voted_players):
+                    await ctx.send("**人狼陣営を吊ったため、**")
+                    await asyncio.sleep(1)
+                    await ctx.send("**__村人陣営の勝利です！__**")
+                else:
+                    await ctx.send("**村人陣営を吊ったため、**")
+                    await asyncio.sleep(1)
+                    await ctx.send("**__人狼陣営の勝利です！__**")
 
         await asyncio.sleep(1)
         await ctx.send("``` ```")
@@ -261,6 +270,15 @@ class Game:
 
         game_side_list = [x.after_game_role.side for x in player_list]
         return SideConst.BLACK in game_side_list
+
+    @staticmethod
+    async def check_hanged_man_in_players(player_list: List[Player]) -> bool:
+        """プレイヤ内に吊人がいるかどうか"""
+
+        player_hanged_man = [x for x in player_list if x.after_game_role.name == "吊人"]
+        logger.debug(f"{player_hanged_man=}")
+        logger.debug(f"{player_hanged_man[0]=}")
+        return player_hanged_man[0]
 
     @staticmethod
     async def get_most_voted_players(player_list: List[Player]) -> List[Player]:

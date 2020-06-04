@@ -228,6 +228,39 @@ async def select_player(
     return p_list[p_idx]
 
 
+class HangedMan(GameRole):
+    """吊人"""
+
+    name = "吊人"
+
+    def __init__(self, bot) -> None:
+        super().__init__(bot)
+        self.bot = bot
+        self.name = HangedMan.name
+        self.side = SideConst.WHITE
+
+    async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
+        await channel.send(
+            f"あなた({player.name})は**__吊人__**(村人陣営)です。勝利条件は**自分が吊られること**です。"
+            f"自分を人狼だと思わせ、自分が吊られることになったらあなた({player.name})の一人勝ちです。"
+        )
+        await channel.send(
+            f"ただし、平和村＝人狼陣営がいない場合、あなた({player.name})は吊られてはいけません。普通の村人として行動しましょう"
+            f"メッセージを確認したら、 {emoji_list[0]} の絵文字リアクションをクリックしてください"
+        )
+        m_id: int = channel.last_message_id
+        last_message: Message = await channel.fetch_message(m_id)
+        await last_message.add_reaction(emoji_list[0])
+
+        def my_check(reaction: Reaction, user: Member) -> bool:
+            member = utils.get(ctx.bot.get_all_members(), id=player.id)
+            return user == member and str(reaction.emoji) == emoji_list[0]
+
+        await ctx.bot.wait_for("reaction_add", check=my_check)
+        await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
+        return 1
+
+
 simple = {
     # 2: 村占狼盗
     2: [Villager, FortuneTeller, Werewolf, Thief],
