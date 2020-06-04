@@ -27,7 +27,11 @@ class Game:
         self.react_num = 0
 
         # 議論時間
-        self.discussion_time = 300
+        # self.discussion_time = 300
+        self.discussion_time = 1
+
+        # 墓地送りになった役職
+        self.grave_role_list = []
 
     async def start(self, ctx: Context) -> None:
         """人狼ゲーム開始"""
@@ -118,6 +122,7 @@ class Game:
             else:
                 role_name = p.after_game_role.name
             await ctx.send(f"{p.name}({role_name})への投票数は{p.vote_count}でした")
+        await ctx.send(f"墓地に置いてあったカードは{self.grave_role_list}でした")
         await ctx.send("``` ```")
 
     async def set_game_role(self, ctx: Context) -> List:
@@ -152,6 +157,10 @@ class Game:
             player.game_role = role
             # 怪盗に交換された後のゲームロール
             player.after_game_role = role
+
+        # 墓地送りになった役職を取得
+        self.grave_role_list.append(role_class_list[-1].name)
+        self.grave_role_list.append(role_class_list[-2].name)
 
         # シャッフルの役職名一覧を返却
         role_name_list = [x.name for x in before_role_class_list]
