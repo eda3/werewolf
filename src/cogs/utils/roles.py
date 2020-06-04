@@ -243,8 +243,8 @@ async def select_player(
 
 
 simple = {
-    # 2: [Villager, FortuneTeller, Werewolf, Thief],
-    2: [Villager, FortuneTeller, FortuneTeller, FortuneTeller],
+    # 2: 村占狼盗
+    2: [Villager, FortuneTeller, Werewolf, Thief],
     # 3: 村村占狼盗
     3: [Villager, Villager, FortuneTeller, Werewolf, Thief],
     # 4: 村村村占狼盗

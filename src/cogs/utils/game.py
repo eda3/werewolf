@@ -82,8 +82,10 @@ class Game:
         await asyncio.sleep(1)
 
         p_list = self.player_list
+        # 平和村かどうか
         # 投票数が全員1かどうかをチェック
         if await self.is_vote_count_same_for_all(p_list):
+            """投票された数が全員一緒のとき"""
             # プレイヤ内に人狼陣営がいるかチェック
             if await self.check_black_side_in_players(p_list):
                 await ctx.send("**投票数全員1。人狼陣営が残っているため、**")
@@ -94,22 +96,24 @@ class Game:
                 await asyncio.sleep(1)
                 await ctx.send("**真の平和村でした**")
                 await asyncio.sleep(1)
-                await ctx.send("**__村人陣営の勝利です！__**")
-
-        most_voted_players: List[Player] = await self.get_most_voted_players(p_list)
-        for mvp in most_voted_players:
-            await ctx.send(f"{mvp.name}({mvp.after_game_role.name})が吊られました")
-            await asyncio.sleep(1)
-
-        # 一番投票数が多かったプレイヤたちに人狼陣営がいれば、村人陣営の勝利
-        if await self.check_black_side_in_players(most_voted_players):
-            await ctx.send("**人狼陣営を吊ったため、**")
-            await asyncio.sleep(1)
-            await ctx.send("**__村人陣営の勝利です！__**")
+                await ctx.send("**__全員の勝利です！__**")
         else:
-            await ctx.send("**村人陣営を吊ったため、**")
-            await asyncio.sleep(1)
-            await ctx.send("**__人狼陣営の勝利です！__**")
+            """投票で誰かが選ばれたとき"""
+            # 一番投票されたプレイヤを選択
+            most_voted_players: List[Player] = await self.get_most_voted_players(p_list)
+            for mvp in most_voted_players:
+                await ctx.send(f"{mvp.name}({mvp.after_game_role.name})が吊られました")
+                await asyncio.sleep(1)
+
+            # 一番投票数が多かったプレイヤたちに人狼陣営がいれば、村人陣営の勝利
+            if await self.check_black_side_in_players(most_voted_players):
+                await ctx.send("**人狼陣営を吊ったため、**")
+                await asyncio.sleep(1)
+                await ctx.send("**__村人陣営の勝利です！__**")
+            else:
+                await ctx.send("**村人陣営を吊ったため、**")
+                await asyncio.sleep(1)
+                await ctx.send("**__人狼陣営の勝利です！__**")
 
         await asyncio.sleep(1)
         await ctx.send("``` ```")
