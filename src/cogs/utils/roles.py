@@ -14,20 +14,6 @@ from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
 
-"""
-class GameRole(metaclass=ABCMeta):
-    各役職の抽象クラス
-
-    def __init__(self, bot: WerewolfBot) -> None:
-        self.bot: WerewolfBot
-        self.name = ""
-        self.side = SideConst.WHITE
-
-    @abstractmethod
-    async def action(self, pl, channel: TextChannel) -> int:
-        pass
-"""
-
 
 class Villager(GameRole):
     """村人"""
