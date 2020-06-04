@@ -169,6 +169,11 @@ class Game:
     async def role_action_exec(self, ctx: Context) -> None:
         role_action_list = []
         for player in self.player_list:
+            if player.game_role.name == "占い師":
+                logger.debug(f"{player.game_role.name=}")
+                # 占い師アクション用：墓場にあるカードを設定する
+                player.game_role.grave_role_list.append(self.grave_role_list)
+
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
             role_action_list.append(
                 asyncio.create_task(

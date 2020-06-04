@@ -110,6 +110,8 @@ class FortuneTeller(GameRole):
         self.bot = bot
         self.name = FortuneTeller.name
         self.side = SideConst.WHITE
+        # 墓場にあるカード
+        self.grave_role_list = []
 
     async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
         await channel.send(
@@ -118,13 +120,59 @@ class FortuneTeller(GameRole):
         )
 
         # 占い対象を選択
-        choice_player = await select_player(self.bot, ctx, player, channel)
+        choice = await self.fortune_telling(self.bot, ctx, player, channel)
 
-        name = choice_player.name
-        side = choice_player.game_role.side.value
-        await channel.send(f"占い結果：{name}は{side}です。")
-
+        # プレイヤーを選択した場合
+        if isinstance(choice, Player):
+            name = choice.name
+            side = choice.game_role.side.value
+            await channel.send(f"占い結果：{name}は{side}です。")
+        else:
+            await channel.send(f"占い結果：墓場に置かれた役職は{choice[0]}です")
         return 1
+
+    async def fortune_telling(
+        self, bot: Bot, ctx: Context, player: Player, channel: TextChannel
+    ) -> Player:
+
+        # 対象を選択
+        p_list = [x for x in bot if x is not player]
+
+        text: str = ""
+        choice_emoji: List[Emoji] = []
+        for i in range(len(p_list)):
+            choice_emoji.append(emoji_list[i])
+            text += f"{emoji_list[i]} {p_list[i].name}"
+
+        # 一番最後に墓場用の絵文字を追加
+        i = i + 1
+        choice_emoji.append(emoji_list[i])
+        text += f"{emoji_list[i]} 墓場のカード2枚"
+
+        await channel.send(text)
+
+        m_id: int = channel.last_message_id
+        last_message: Message = await channel.fetch_message(m_id)
+        for emoji in choice_emoji:
+            await last_message.add_reaction(emoji)
+
+        def my_check(reaction: Reaction, user: Member) -> bool:
+            member = utils.get(ctx.bot.get_all_members(), id=player.id)
+            return user == member and str(reaction.emoji) in choice_emoji
+
+        react_emoji, react_user = await ctx.bot.wait_for("reaction_add", check=my_check)
+        await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
+
+        # リアクション絵文字から、プレイヤを逆引き
+        p_idx = 0
+        for i, emoji in enumerate(choice_emoji):
+            if emoji == react_emoji.emoji:
+                p_idx = i
+
+        if len(p_list) == p_idx:
+            return self.grave_role_list
+        else:
+            return p_list[p_idx]
 
 
 class Thief(GameRole):
@@ -195,7 +243,8 @@ async def select_player(
 
 
 simple = {
-    2: [Villager, FortuneTeller, Werewolf, Thief],
+    # 2: [Villager, FortuneTeller, Werewolf, Thief],
+    2: [Villager, FortuneTeller, FortuneTeller, FortuneTeller],
     # 3: 村村占狼盗
     3: [Villager, Villager, FortuneTeller, Werewolf, Thief],
     # 4: 村村村占狼盗
