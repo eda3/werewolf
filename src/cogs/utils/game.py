@@ -42,7 +42,7 @@ class Game:
         await ctx.send(f"ゲームのステータスを{self.status}に変更しました")
 
         # 参加者に役職と鍵チャンネル権限設定
-        await self.set_game_role(ctx)
+        role_name_list = await self.set_game_role(ctx)
 
         # ロールごとのアクション実行
         await self.role_action_exec(ctx)
@@ -55,6 +55,8 @@ class Game:
         await ctx.send("**ゲーム開始です。それぞれの役職は自分にあった行動をしてください**")
         await asyncio.sleep(1)
         await ctx.send(f"**議論時間は{self.discussion_time}秒です**")
+        await asyncio.sleep(1)
+        await ctx.send(f"**__今回のゲームの役職は{role_name_list}です__**")
 
         # 30秒ごとに残り時間を出力
         while 0 < self.discussion_time:
@@ -118,11 +120,12 @@ class Game:
             await ctx.send(f"{p.name}({role_name})への投票数は{p.vote_count}でした")
         await ctx.send("``` ```")
 
-    async def set_game_role(self, ctx: Context) -> None:
+    async def set_game_role(self, ctx: Context) -> List:
         # 役職配布
         n: int = len(self.player_list)
 
-        role_class_list = random.sample(simple[n], n)
+        before_role_class_list = simple[n]
+        role_class_list = random.sample(before_role_class_list, n + 2)
         role_list = []
         for role in role_class_list:
             role_list.append(role(self.player_list))
@@ -149,6 +152,10 @@ class Game:
             player.game_role = role
             # 怪盗に交換された後のゲームロール
             player.after_game_role = role
+
+        # シャッフルの役職名一覧を返却
+        role_name_list = [x.name for x in before_role_class_list]
+        return role_name_list
 
     async def role_action_exec(self, ctx: Context) -> None:
         role_action_list = []

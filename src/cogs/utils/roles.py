@@ -32,10 +32,12 @@ class GameRole(metaclass=ABCMeta):
 class Villager(GameRole):
     """村人"""
 
+    name = "村人"
+
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
-        self.name = "村人"
+        self.name = Villager.name
         self.side = SideConst.WHITE
 
     async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
@@ -60,10 +62,12 @@ class Villager(GameRole):
 class Werewolf(GameRole):
     """人狼"""
 
+    name = "人狼"
+
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
-        self.name = "人狼"
+        self.name = Werewolf.name
         self.side = SideConst.BLACK
 
     async def action(self, ctx, player: Player, channel: TextChannel) -> int:
@@ -99,10 +103,12 @@ class Werewolf(GameRole):
 class FortuneTeller(GameRole):
     """占い師"""
 
+    name = "占い師"
+
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
-        self.name = "占い師"
+        self.name = FortuneTeller.name
         self.side = SideConst.WHITE
 
     async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
@@ -124,10 +130,12 @@ class FortuneTeller(GameRole):
 class Thief(GameRole):
     """怪盗"""
 
+    name = "怪盗"
+
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
-        self.name = "怪盗"
+        self.name = Thief.name
         self.side = SideConst.WHITE
 
     async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
