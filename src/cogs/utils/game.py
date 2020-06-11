@@ -27,8 +27,7 @@ class Game:
         self.react_num = 0
 
         # 議論時間
-        # self.discussion_time = 300
-        self.discussion_time = 1
+        self.discussion_time = 300
 
         # 墓地送りになった役職
         self.grave_role_list = []
@@ -48,8 +47,12 @@ class Game:
         # 参加者に役職と鍵チャンネル権限設定
         role_name_list = await self.set_game_role(ctx)
 
+        # 配役一覧
+        roles_message = f"**__今回のゲームの役職は{role_name_list}です__**"
+        await ctx.send(roles_message)
+
         # ロールごとのアクション実行
-        await self.role_action_exec(ctx)
+        await self.role_action_exec(ctx, roles_message)
 
         # wait_for()処理が終わった後に実行される
         await asyncio.sleep(1)
@@ -60,14 +63,13 @@ class Game:
         await asyncio.sleep(1)
         await ctx.send(f"**議論時間は{self.discussion_time}秒です**")
         await asyncio.sleep(1)
-        await ctx.send(f"**__今回のゲームの役職は{role_name_list}です__**")
 
         # 30秒ごとに残り時間を出力
         while 0 < self.discussion_time:
             await asyncio.sleep(1)
             self.discussion_time = self.discussion_time - 1
-            if self.discussion_time % 30 == 0:
-                await ctx.send(f"**残り{self.discussion_time}秒です**")
+            if self.discussion_time % 60 == 0:
+                await ctx.send(f"**残り{self.discussion_time}秒です。** {roles_message}")
 
         await ctx.send("**(デバッグモード)ゲーム終了です**")
         await asyncio.sleep(1)
@@ -185,7 +187,7 @@ class Game:
         role_name_list = [x.name for x in before_role_class_list]
         return role_name_list
 
-    async def role_action_exec(self, ctx: Context) -> None:
+    async def role_action_exec(self, ctx: Context, roles_message) -> None:
         role_action_list = []
         for player in self.player_list:
             if player.game_role.name == "占い師":
