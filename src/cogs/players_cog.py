@@ -4,6 +4,7 @@ from discord.ext.commands import Bot, Cog, Context, command
 from discord.member import Member
 
 from cogs.utils.const import GameStatusConst
+from cogs.utils.const import emoji_list
 from cogs.utils.player import Player
 from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
@@ -37,7 +38,7 @@ class PlayersCog(Cog):
         self.bot.game.player_list.append(player)
         await ctx.send(f"{member}がjoinしました")
 
-    @command(aliases=["spl"])
+    @command(aliases=["show", "spl"])
     async def show_player_list(self, ctx: Context) -> None:
         """参加者一覧を表示
 
@@ -45,8 +46,10 @@ class PlayersCog(Cog):
         :return:
         """
         p_list = [x for x in self.bot.game.player_list]
-        pname_list = [x.name for x in p_list]
-        await ctx.send(f"ゲームの参加者は{pname_list}です")
+        player_list_message = f":man: :mage: :supervillain: :wolf:  ゲームの参加者({len(p_list)}人)： \n"
+        for i in range(len(p_list)):
+            player_list_message += emoji_list[i] + p_list[i].name + "\n"
+        await ctx.send(player_list_message)
 
 
 def setup(bot: Bot) -> None:
