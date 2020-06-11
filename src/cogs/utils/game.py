@@ -276,9 +276,10 @@ class Game:
         """プレイヤ内に吊人がいるかどうか"""
 
         player_hanged_man = [x for x in player_list if x.after_game_role.name == "吊人"]
-        logger.debug(f"{player_hanged_man=}")
-        logger.debug(f"{player_hanged_man[0]=}")
-        return player_hanged_man[0]
+        if player_hanged_man:
+            return player_hanged_man[0]
+        else:
+            return False
 
     @staticmethod
     async def get_most_voted_players(player_list: List[Player]) -> List[Player]:
