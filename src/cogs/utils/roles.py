@@ -261,12 +261,23 @@ class HangedMan(GameRole):
 
 
 simple = {
-    # 2: 村占狼盗
-    2: [Villager, FortuneTeller, Werewolf, Thief],
+    # 2: 村占盗狼
+    2: [Villager, FortuneTeller, Thief, Werewolf],
     # 3: 村村占狼盗
-    3: [Villager, Villager, FortuneTeller, Werewolf, Thief],
-    # 4: 村村村占狼盗
-    4: [Villager, Villager, Villager, FortuneTeller, Werewolf, Thief],
-    # 5: 村村村占狼狼盗
-    5: [Villager, Villager, Villager, FortuneTeller, Werewolf, Werewolf, Thief],
+    3: [Villager, Villager, FortuneTeller, Thief, Werewolf],
+    # 4: 村村占狼狼盗
+    4: [Villager, Villager, FortuneTeller, Thief, Werewolf, Werewolf],
+    # 5: 村村占狼狼盗吊
+    5: [Villager, Villager, FortuneTeller, Thief, Werewolf, Werewolf, HangedMan],
+    # 6:村村村占狼狼盗吊
+    6: [
+        Villager,
+        Villager,
+        Villager,
+        FortuneTeller,
+        Thief,
+        Werewolf,
+        Werewolf,
+        HangedMan,
+    ],
 }
