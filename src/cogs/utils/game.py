@@ -277,7 +277,9 @@ class Game:
     async def check_hanged_man_in_players(player_list: List[Player]) -> bool:
         """プレイヤ内に吊人がいるかどうか"""
 
-        player_hanged_man = [x for x in player_list if x.after_game_role.name == HangedMan.name]
+        player_hanged_man = [
+            x for x in player_list if x.after_game_role.name == HangedMan.name
+        ]
         if player_hanged_man:
             return player_hanged_man[0]
         else:

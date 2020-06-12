@@ -237,7 +237,6 @@ class HangedMan(GameRole):
 
     name = ":upside_down:吊人"
 
-
     def __init__(self, bot) -> None:
         super().__init__(bot)
         self.bot = bot
