@@ -56,21 +56,27 @@ class Werewolf(GameRole):
         self.side = SideConst.BLACK
 
     async def action(self, ctx, player: Player, channel: TextChannel) -> int:
-        first_night_message = (
-            "あなたは**__人狼__**(人狼陣営)です。勝利条件は村人陣営（村人、占い師、怪盗）を吊ることです。"
-            f"メッセージを確認したら、 {emoji_list[0]} の絵文字リアクションをクリックしてください"
-        )
-        await channel.send(first_night_message)
+        await channel.send("あなたは:wolf:**__人狼__**(人狼陣営)です。\n")
 
         # リストから人狼一覧を抽出
         player_list: List[Player] = ctx.bot.game.player_list
         werewolf_list: List[str] = []
         for p in player_list:
-            if p.game_role.name == "人狼":
+            if p.game_role.name == Werewolf.name:
                 werewolf_list.append(p.name)
 
-        text = f"今回のゲームの人狼は{werewolf_list}です"
+        text = f"今回のゲームの人狼は以下の{len(werewolf_list)}人です。\n"
+
+        for werewolf in werewolf_list:
+            text += werewolf
+            "\n"
+
         await channel.send(text)
+        first_night_message = (
+            "勝利条件は村人陣営（村人、占い師、怪盗）を吊ることです。"
+            f"メッセージを確認したら、 {emoji_list[0]} の絵文字リアクションをクリックしてください。\n"
+        )
+        await channel.send(first_night_message)
 
         m_id: int = channel.last_message_id
         last_message: Message = await channel.fetch_message(m_id)
