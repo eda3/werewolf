@@ -12,7 +12,7 @@ from cogs.utils.const import GameStatusConst, SideConst
 from cogs.utils.player import Player
 from cogs.utils.player_list import PlayerList
 from cogs.utils.roles import simple
-from cogs.utils.roles import HangedMan
+from cogs.utils.roles import FortuneTeller, HangedMan
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -191,8 +191,7 @@ class Game:
     async def role_action_exec(self, ctx: Context, roles_message) -> None:
         role_action_list = []
         for player in self.player_list:
-            if player.game_role.name == "占い師":
-                logger.debug(f"{player.game_role.name=}")
+            if player.game_role.name == FortuneTeller.name:
                 # 占い師アクション用：墓場にあるカードを設定する
                 player.game_role.grave_role_list.append(self.grave_role_list)
 
