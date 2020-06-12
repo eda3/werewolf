@@ -12,6 +12,7 @@ from cogs.utils.const import GameStatusConst, SideConst
 from cogs.utils.player import Player
 from cogs.utils.player_list import PlayerList
 from cogs.utils.roles import simple
+from cogs.utils.roles import HangedMan
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -277,7 +278,7 @@ class Game:
     async def check_hanged_man_in_players(player_list: List[Player]) -> bool:
         """プレイヤ内に吊人がいるかどうか"""
 
-        player_hanged_man = [x for x in player_list if x.after_game_role.name == "吊人"]
+        player_hanged_man = [x for x in player_list if x.after_game_role.name == HangedMan.name]
         if player_hanged_man:
             return player_hanged_man[0]
         else:
