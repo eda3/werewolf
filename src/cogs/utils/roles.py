@@ -18,7 +18,7 @@ logger = setup_logger(__name__)
 class Villager(GameRole):
     """村人"""
 
-    name = "村人"
+    name = ":man:村人"
 
     def __init__(self, bot) -> None:
         super().__init__(bot)
@@ -48,7 +48,7 @@ class Villager(GameRole):
 class Werewolf(GameRole):
     """人狼"""
 
-    name = "人狼"
+    name = ":wolf:人狼"
 
     def __init__(self, bot) -> None:
         super().__init__(bot)
@@ -89,7 +89,7 @@ class Werewolf(GameRole):
 class FortuneTeller(GameRole):
     """占い師"""
 
-    name = "占い師"
+    name = ":mage:占い師"
 
     def __init__(self, bot) -> None:
         super().__init__(bot)
@@ -164,7 +164,7 @@ class FortuneTeller(GameRole):
 class Thief(GameRole):
     """怪盗"""
 
-    name = "怪盗"
+    name = ":supervillain:怪盗"
 
     def __init__(self, bot) -> None:
         super().__init__(bot)
@@ -230,7 +230,8 @@ async def select_player(
 class HangedMan(GameRole):
     """吊人"""
 
-    name = "吊人"
+    name = ":upside_down:吊人"
+
 
     def __init__(self, bot) -> None:
         super().__init__(bot)
