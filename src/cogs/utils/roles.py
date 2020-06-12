@@ -1,13 +1,12 @@
 from typing import List
 
-from discord import utils
-from discord import Emoji, Member, Message, Reaction
-from discord.channel import TextChannel
-from discord.ext.commands import Bot, Context
-
 from cogs.utils.const import SideConst, emoji_list
 from cogs.utils.gamerole import GameRole
 from cogs.utils.player import Player
+from discord import Emoji, Member, Message, Reaction
+from discord import utils
+from discord.channel import TextChannel
+from discord.ext.commands import Bot, Context
 
 # from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
