@@ -3,7 +3,8 @@ from typing import List
 from discord import Role, utils
 from discord.ext.commands import Bot, Cog, Context, command
 
-from cogs.utils.const import GameStatusConst, join_channel_const
+from cogs.utils.const import (DISCUSSION_TIME, GameStatusConst,
+                              join_channel_const)
 from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
@@ -33,8 +34,13 @@ class GameStatusCog(Cog):
         await ctx.send("参加者の募集を開始しました。")
 
     @command(aliases=["sta", "s"])
-    async def start(self, ctx: Context) -> None:
-        await self.bot.game.start(ctx)
+    async def start(self, ctx: Context, discussion_time: int = DISCUSSION_TIME) -> None:
+        # 数値チェック
+        if isinstance(discussion_time, int):
+            await self.bot.game.start(ctx, discussion_time)
+        else:
+            s = "startコマンドの引数には数値を入れてください\n" "例：`;start 300`"
+            await ctx.send(s)
 
     @command()
     async def end(self, ctx: Context) -> None:

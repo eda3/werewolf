@@ -75,3 +75,6 @@ emoji_list = [
 class SideConst(Enum):
     WHITE = "村人陣営(白)"
     BLACK = "人狼陣営(黒)"
+
+
+DISCUSSION_TIME = 300

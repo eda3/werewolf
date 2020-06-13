@@ -11,14 +11,16 @@ from discord.ext.commands import Context
 from cogs.utils.const import GameStatusConst, SideConst
 from cogs.utils.player import Player
 from cogs.utils.player_list import PlayerList
-from cogs.utils.roles import simple
-from cogs.utils.roles import FortuneTeller, HangedMan
+from cogs.utils.roles import FortuneTeller, HangedMan, simple
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
 
 
 class Game:
+    # 議論時間
+    discussion_time: int
+
     def __init__(self) -> None:
         logger.debug("Gameクラス init")
         self.status = GameStatusConst.NOTHING.value
@@ -27,13 +29,10 @@ class Game:
         # 参加者がリアクション絵文字を押した数
         self.react_num = 0
 
-        # 議論時間
-        self.discussion_time = 300
-
         # 墓地送りになった役職
         self.grave_role_list = []
 
-    async def start(self, ctx: Context) -> None:
+    async def start(self, ctx: Context, discussion_time: int) -> None:
         """人狼ゲーム開始"""
         # メソッド名取得
         method: str = sys._getframe().f_code.co_name
@@ -54,6 +53,9 @@ class Game:
 
         # ロールごとのアクション実行
         await self.role_action_exec(ctx, roles_message)
+
+        # パラメータから議論時間の設定
+        self.discussion_time = discussion_time
 
         # wait_for()処理が終わった後に実行される
         await asyncio.sleep(1)
