@@ -26,6 +26,7 @@ def main() -> None:
     extension_list = [
         "cogs.players_cog",
         "cogs.game_status_cog",
+        "cogs.game_role_cog",
     ]
     for extension in extension_list:
         bot.load_extension(name=extension)
