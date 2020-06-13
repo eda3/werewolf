@@ -192,8 +192,9 @@ class Thief(GameRole):
         choice_player.after_game_role = temp_role
 
         await channel.send(
-            f"あなたは{choice_player.name}と役職交換しました。"
-            f"{choice_player.name}の現在役職は{choice_player.after_game_role.name}です。"
+            f"あなたは{choice_player.name}と役職交換しました。\n"
+            f"{choice_player.name}の役職は{choice_player.game_role.name}でした。\n"
+            f"{choice_player.name}の現在の役職は{choice_player.after_game_role.name}です。\n"
             f"あなたの現在の役職は{player.after_game_role.name}です。"
         )
         return 1
