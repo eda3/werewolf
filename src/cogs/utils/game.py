@@ -65,11 +65,17 @@ class Game:
         await ctx.send(f"**議論時間は{self.discussion_time}秒です**")
         await asyncio.sleep(1)
 
-        # 30秒ごとに残り時間を出力
+        # 60秒ごとに残り時間を出力
         while 0 < self.discussion_time:
             await asyncio.sleep(1)
             self.discussion_time = self.discussion_time - 1
-            if self.discussion_time % 60 == 0:
+
+            # 残り時間60秒未満になったら、15秒区切りでメッセージ
+            if self.discussion_time < 60:
+                if self.discussion_time % 15 == 0:
+                    await ctx.send(f"**残り{self.discussion_time}秒です。** {roles_message}")
+            # 60秒以上の場合は60秒区切りでメッセージ
+            elif self.discussion_time % 60 == 0:
                 await ctx.send(f"**残り{self.discussion_time}秒です。** {roles_message}")
 
         await ctx.send("**(デバッグモード)ゲーム終了です**")
