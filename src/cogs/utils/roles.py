@@ -65,11 +65,10 @@ class Werewolf(GameRole):
             if p.game_role.name == Werewolf.name:
                 werewolf_list.append(p.name)
 
-        text = f"今回のゲームの人狼は以下の{len(werewolf_list)}人です。\n"
+        text = f"今回のゲームの人狼は以下の__**{len(werewolf_list)}人**__です。\n"
 
         for werewolf in werewolf_list:
-            text += werewolf
-            "\n"
+            text += ":wolf:" + werewolf + "\n"
 
         await channel.send(text)
         first_night_message = (
