@@ -261,7 +261,10 @@ class Game:
 
             member = utils.get(ctx.guild.members, id=player.id)
             await member.add_roles(d_role)
-            s: str = f"{player.name}さんは鍵チャンネル{d_role_name}にアクセス出来るようになりました"
+
+            # ロール名からテキストチャンネル情報を取得
+            channel_data = utils.get(ctx.guild.channels, name=d_role_name)
+            s: str = f"{player.name}は{channel_data.mention}にアクセス出来るようになりました"
             await ctx.send(s)
 
     @staticmethod
