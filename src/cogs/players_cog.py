@@ -45,7 +45,9 @@ class PlayersCog(Cog):
         :return:
         """
         p_list = [x for x in self.bot.game.player_list]
-        player_list_message = f":man: :mage: :supervillain: :wolf:  ゲームの参加者({len(p_list)}人)： \n"
+        player_list_message = (
+            f":man: :mage: :supervillain: :wolf:  ゲームの参加者({len(p_list)}人)： \n"
+        )
         for i in range(len(p_list)):
             player_list_message += emoji_list[i] + p_list[i].name + "\n"
         await ctx.send(player_list_message)
