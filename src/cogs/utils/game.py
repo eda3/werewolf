@@ -10,7 +10,6 @@ from discord.ext.commands import Context
 
 from cogs.utils.const import GameStatusConst, SideConst
 from cogs.utils.player import Player
-from cogs.utils.player_list import PlayerList
 from cogs.utils.roles import FortuneTeller, HangedMan, simple
 from setup_logger import setup_logger
 
@@ -24,7 +23,7 @@ class Game:
     def __init__(self) -> None:
         logger.debug("Gameクラス init")
         self.status = GameStatusConst.NOTHING.value
-        self.player_list: PlayerList = PlayerList()
+        self.player_list = []
 
         # 参加者がリアクション絵文字を押した数
         self.react_num = 0
