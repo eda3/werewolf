@@ -3,8 +3,7 @@ from typing import List
 from discord import Role, utils
 from discord.ext.commands import Bot, Cog, Context, command
 
-from cogs.utils.const import (DISCUSSION_TIME, GameStatusConst,
-                              join_channel_const)
+from cogs.utils.const import DISCUSSION_TIME, GameStatusConst
 from cogs.utils.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
@@ -58,7 +57,10 @@ class GameStatusCog(Cog):
         :param ctx:
         :return:
         """
-        for i in range(len(join_channel_const)):
+
+        channel_count = 10
+
+        for i in range(channel_count):
             d_role_name: str = "join0" + str(i)
             d_role: Role = utils.get(ctx.guild.roles, name=d_role_name)
             for member in d_role.members:
