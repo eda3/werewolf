@@ -3,8 +3,8 @@ from logging import Logger
 
 from discord.ext.commands import Context, command
 
-from cogs.utils.game import Game
-from cogs.utils.werewolf_bot import WerewolfBot
+from games.game import Game
+from games.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 

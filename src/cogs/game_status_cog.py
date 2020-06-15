@@ -3,8 +3,8 @@ from typing import List
 from discord import Role, utils
 from discord.ext.commands import Bot, Cog, Context, command
 
-from cogs.utils.const import DISCUSSION_TIME, GameStatusConst
-from cogs.utils.werewolf_bot import WerewolfBot
+from games.const import DISCUSSION_TIME, GameStatusConst
+from games.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)

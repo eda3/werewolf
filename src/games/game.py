@@ -9,10 +9,10 @@ from typing import List
 from discord import Role, utils
 from discord.ext.commands import Context
 
-from cogs.utils.const import GameStatusConst, SideConst
-from cogs.utils.gamerole import GameRole
-from cogs.utils.player import Player
-from cogs.utils.roles import FortuneTeller, HangedMan, simple
+from games.const import GameStatusConst, SideConst
+from games.gamerole import GameRole
+from games.player import Player
+from games.roles import FortuneTeller, HangedMan, simple
 from setup_logger import setup_logger
 
 logger: Logger = setup_logger(__name__)

@@ -1,6 +1,6 @@
 from discord.ext.commands import Bot, Cog, Context, command
 
-from cogs.utils.roles import simple
+from games.roles import simple
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)

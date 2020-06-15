@@ -4,11 +4,11 @@ from discord import Emoji, Member, Message, Reaction, utils
 from discord.channel import TextChannel
 from discord.ext.commands import Bot, Context
 
-from cogs.utils.const import SideConst, emoji_list
-from cogs.utils.gamerole import GameRole
-from cogs.utils.player import Player
+from games.const import SideConst, emoji_list
+from games.gamerole import GameRole
+from games.player import Player
 
-# from cogs.utils.werewolf_bot import WerewolfBot
+# from games.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -37,7 +37,7 @@ class Villager(GameRole):
 
         def my_check(reaction: Reaction, user: Member) -> bool:
             member = utils.get(ctx.bot.get_all_members(), id=player.id)
-            return user is member and str(reaction.emoji) is emoji_list[0]
+            return user.id == member.id and str(reaction.emoji) == emoji_list[0]
 
         await ctx.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
@@ -82,8 +82,8 @@ class Werewolf(GameRole):
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            member = utils.get(ctx.bot.get_all_members(), id=player.id)
-            return user is member and str(reaction.emoji) is emoji_list[0]
+            member: Member = utils.get(ctx.bot.get_all_members(), id=player.id)
+            return user.id == member.id and str(reaction.emoji) == emoji_list[0]
 
         await ctx.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
@@ -148,7 +148,7 @@ class FortuneTeller(GameRole):
 
         def my_check(reaction: Reaction, user: Member) -> bool:
             member = utils.get(ctx.bot.get_all_members(), id=player.id)
-            return user == member and str(reaction.emoji) in choice_emoji
+            return user.id == member.id and str(reaction.emoji) in choice_emoji
 
         react_emoji, react_user = await ctx.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
@@ -218,7 +218,7 @@ async def select_player(
 
     def my_check(reaction: Reaction, user: Member) -> bool:
         member = utils.get(ctx.bot.get_all_members(), id=player.id)
-        return user == member and str(reaction.emoji) in choice_emoji
+        return user.id == member.id and str(reaction.emoji) in choice_emoji
 
     react_emoji, react_user = await ctx.bot.wait_for("reaction_add", check=my_check)
     await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
@@ -258,7 +258,7 @@ class HangedMan(GameRole):
 
         def my_check(reaction: Reaction, user: Member) -> bool:
             member = utils.get(ctx.bot.get_all_members(), id=player.id)
-            return user is member and str(reaction.emoji) is emoji_list[0]
+            return user.id == member.id and str(reaction.emoji) == emoji_list[0]
 
         await ctx.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")

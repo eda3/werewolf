@@ -3,9 +3,9 @@ import sys
 from discord.ext.commands import Bot, Cog, Context, command
 from discord.member import Member
 
-from cogs.utils.const import GameStatusConst, emoji_list
-from cogs.utils.player import Player
-from cogs.utils.werewolf_bot import WerewolfBot
+from games.const import GameStatusConst, emoji_list
+from games.player import Player
+from games.werewolf_bot import WerewolfBot
 from setup_logger import setup_logger
 
 logger = setup_logger(__name__)

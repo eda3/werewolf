@@ -4,10 +4,9 @@ from discord import Emoji, Member, Message, Reaction, utils
 from discord.channel import TextChannel
 from discord.ext.commands import Context
 
-from cogs.utils.const import SideConst, emoji_list
+from games.const import SideConst, emoji_list
 
-if TYPE_CHECKING:  # 循環importエラー対策
-    from cogs.utils.player import Player
+from games.player import Player
 
 
 class GameRole:
