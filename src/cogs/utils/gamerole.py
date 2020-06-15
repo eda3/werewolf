@@ -1,32 +1,38 @@
-from typing import List
+from typing import TYPE_CHECKING, List
 
-from discord.ext.commands import Context
 from discord import Emoji, Member, Message, Reaction, utils
 from discord.channel import TextChannel
+from discord.ext.commands import Context
 
 from cogs.utils.const import SideConst, emoji_list
+
+if TYPE_CHECKING:  # 循環importエラー対策
+    from cogs.utils.player import Player
 
 
 class GameRole:
     """各役職のスーパークラス"""
 
-    def __init__(self, player_list) -> None:
-        self.player_list = player_list
-        self.name = ""
-        self.side = SideConst.WHITE
+    name: str
 
-    async def vote(self, ctx: Context, player, channel: TextChannel) -> int:
+    def __init__(self, player_list: List[Player]) -> None:
+        self.player_list: List[Player] = player_list
+        self.side: str = SideConst.WHITE
+
+    async def vote(self, ctx: Context, player: Player, channel: TextChannel) -> int:
         await channel.send("``` ```")
         await channel.send("人狼だと思う人を一人選択してください")
 
-        choice_player = await self.select_player(ctx, player, channel)
+        choice_player: Player = await self.select_player(ctx, player, channel)
 
         player.vote_target = choice_player.name
         await channel.send(f"あなたは{player.vote_target}に投票しました")
 
         return 1
 
-    async def select_player(self, ctx: Context, player, channel: TextChannel):
+    async def select_player(
+        self, ctx: Context, player: Player, channel: TextChannel
+    ) -> Player:
         # 対象を選択
         p_list = self.player_list
         text: str = ""

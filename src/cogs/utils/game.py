@@ -3,17 +3,19 @@ from __future__ import annotations
 import asyncio
 import random
 import sys
+from logging import Logger
 from typing import List
 
 from discord import Role, utils
 from discord.ext.commands import Context
 
 from cogs.utils.const import GameStatusConst, SideConst
+from cogs.utils.gamerole import GameRole
 from cogs.utils.player import Player
 from cogs.utils.roles import FortuneTeller, HangedMan, simple
 from setup_logger import setup_logger
 
-logger = setup_logger(__name__)
+logger: Logger = setup_logger(__name__)
 
 
 class Game:
@@ -22,14 +24,14 @@ class Game:
 
     def __init__(self) -> None:
         logger.debug("Gameクラス init")
-        self.status = GameStatusConst.NOTHING.value
-        self.player_list = []
+        self.status: str = GameStatusConst.NOTHING.value
+        self.player_list: List[Player] = []
 
         # 参加者がリアクション絵文字を押した数
-        self.react_num = 0
+        self.react_num: int = 0
 
         # 墓地送りになった役職
-        self.grave_role_list = []
+        self.grave_role_list: List[GameRole] = []
 
     async def start(self, ctx: Context, discussion_time: int) -> None:
         """人狼ゲーム開始"""
@@ -154,7 +156,7 @@ class Game:
         await ctx.send(f"墓地に置いてあったカードは{self.grave_role_list}でした")
         await ctx.send("``` ```")
 
-    async def set_game_role(self, ctx: Context) -> List:
+    async def set_game_role(self, ctx: Context) -> List[GameRole]:
         # 役職配布
         n: int = len(self.player_list)
 
@@ -195,7 +197,7 @@ class Game:
         role_name_list = [x.name for x in before_role_class_list]
         return role_name_list
 
-    async def role_action_exec(self, ctx: Context, roles_message) -> None:
+    async def role_action_exec(self, ctx: Context, roles_message: str) -> None:
         role_action_list = []
         for player in self.player_list:
             if player.game_role.name == FortuneTeller.name:
@@ -284,7 +286,7 @@ class Game:
         return SideConst.BLACK in game_side_list
 
     @staticmethod
-    async def check_hanged_man_in_players(player_list: List[Player]) -> bool:
+    async def check_hanged_man_in_players(player_list: List[Player]) -> Player:
         """プレイヤ内に吊人がいるかどうか"""
 
         player_hanged_man = [
@@ -293,13 +295,13 @@ class Game:
         if player_hanged_man:
             return player_hanged_man[0]
         else:
-            return False
+            return None
 
     @staticmethod
     async def get_most_voted_players(player_list: List[Player]) -> List[Player]:
         """一番投票されたプレイヤを返す"""
         # 投票された数とゲーム終了後の役職を取得
-        voted_list = [x.vote_count for x in player_list]
+        voted_list: List[Player] = [x.vote_count for x in player_list]
         logger.debug(f"{voted_list=}")
 
         sorted_voted_list = []

@@ -7,9 +7,9 @@ logger = setup_logger(__name__)
 
 class GameStatusConst(Enum):
     logger.debug("Constのinit")
-    NOTHING = "nothing"
-    PLAYING = "playing"
-    WAITING = "waiting"
+    NOTHING: str = "nothing"
+    PLAYING: str = "playing"
+    WAITING: str = "waiting"
 
 
 # アルファベット絵文字のA～Z
