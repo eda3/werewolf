@@ -1,6 +1,6 @@
 import pytest
-
 import pytest_asyncio
+
 from cogs.game_status_cog import GameStatusCog
 from cogs.utils.player import Player
 from cogs.utils.roles import FortuneTeller, Thief, Villager, Werewolf
