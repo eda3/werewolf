@@ -1,10 +1,8 @@
-from games.const import SideConst
+from abc import ABC
 
 
-class GameRole:
-    """各役職のスーパークラス"""
+class GameRole(ABC):
+    """各役職の抽象クラス"""
 
     name: str
-
-    def __init__(self) -> None:
-        self.side: str = SideConst.WHITE
+    side: str
