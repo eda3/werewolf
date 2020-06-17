@@ -171,9 +171,8 @@ class Game:
 
             # 送信先チャンネル取得
             channel_name: str = "join0" + str(i)
-            for c in ctx.guild.channels:
-                if c.name == channel_name:
-                    channel = c
+            channel = utils.get(ctx.guild.channels, name=channel_name)
+
             # テキストセパレータ
             await channel.send("``` ```")
             await channel.send(f"{channel_name}に送信。{name}の役職は{role.name}です")
