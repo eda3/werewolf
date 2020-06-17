@@ -1,32 +1,28 @@
 from __future__ import annotations
-from typing import Generic, List, TypeVar
+from typing import List
 from discord import Emoji, Member, Message, Reaction, utils
 from discord.channel import TextChannel
 from discord.ext.commands import Context
 
+from games.gamerole import GameRole
 from games.const import emoji_list
 
 
-T = TypeVar("T")
-
-
-class Player(Generic[T]):
+class Player:
     """人狼ゲーム参加者
 
     Attributes:
         id: DiscordユーザID
     """
 
-    game_role: T
-    # 怪盗役職交換用
-    after_game_role: T
-
-    def __init__(self, d_id: int, name: str):
-        self.id: int = d_id
+    def __init__(self, discord_id: int, name: str):
+        self.discord_id: int = discord_id
         self.name: str = name
         self.channel: TextChannel
         self.vote_count: int = 0
         self.vote_target = ""
+        self.game_role: GameRole  # 怪盗交換前
+        self.after_game_role: GameRole  # 怪盗交換後
 
     async def vote(self, ctx: Context, player_list, channel: TextChannel) -> int:
         await channel.send("``` ```")
@@ -34,14 +30,14 @@ class Player(Generic[T]):
 
         text: str = ""
         choice_emoji: List[Emoji] = []
-        for emoji, p in zip(emoji_list, player_list):
+        for emoji, player in zip(emoji_list, player_list):  # type: Emoji, Player
             choice_emoji.append(emoji)
-            text += f"{emoji} {p.name}"
+            text += f"{emoji} {player.name}"
         await channel.send(text)
 
         m_id: int = channel.last_message_id
         last_message: Message = await channel.fetch_message(m_id)
-        for emoji in choice_emoji:
+        for emoji in choice_emoji:  # type: Emoji
             await last_message.add_reaction(emoji)
 
         def my_check(reaction: Reaction, user: Member) -> bool:
@@ -53,7 +49,7 @@ class Player(Generic[T]):
 
         # リアクション絵文字から、プレイヤを逆引き
         p_idx = 0
-        for i, emoji in enumerate(choice_emoji):
+        for i, emoji in enumerate(choice_emoji):  # type: int, Emoji
             if emoji == react_emoji.emoji:
                 p_idx = i
 

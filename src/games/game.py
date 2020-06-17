@@ -259,7 +259,7 @@ class Game:
             d_role_name: str = "join0" + str(i)
             d_role: Role = utils.get(ctx.guild.roles, name=d_role_name)
 
-            member = utils.get(ctx.guild.members, id=player.id)
+            member = utils.get(ctx.guild.members, id=player.discord_id)
             await member.add_roles(d_role)
 
             # ロール名からテキストチャンネル情報を取得

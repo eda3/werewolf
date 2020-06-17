@@ -1,17 +1,15 @@
 from typing import List
 
-from discord import Emoji, Member, Message, Reaction, utils
+from discord import Emoji, Member, Message, Reaction
 from discord.channel import TextChannel
-from discord.ext.commands import Bot, Context
+from discord.ext.commands import Bot
 
 from games.const import SideConst, emoji_list
 from games.gamerole import GameRole
 from games.player import Player
 
-from games.werewolf_bot import WerewolfBot
 
-
-class Villager:
+class Villager(GameRole):
     """村人"""
 
     name: str = ":man:村人"
@@ -35,7 +33,7 @@ class Villager:
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user.id == player.id and reaction.emoji == emoji_list[0]
+            return user.id == player.discord_id and reaction.emoji == emoji_list[0]
 
         await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
@@ -79,7 +77,7 @@ class Werewolf:
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user.id == player.id and str(reaction.emoji) == emoji_list[0]
+            return user.id == player.discord_id and str(reaction.emoji) == emoji_list[0]
 
         await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
@@ -144,7 +142,7 @@ class FortuneTeller:
             await last_message.add_reaction(emoji)
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user.id == player.id and str(reaction.emoji) in choice_emoji
+            return user.id == player.discord_id and str(reaction.emoji) in choice_emoji
 
         react_emoji, react_user = await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
@@ -212,7 +210,7 @@ class Thief:
             await last_message.add_reaction(emoji)
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user.id == player.id and str(reaction.emoji) in choice_emoji
+            return user.id == player.discord_id and str(reaction.emoji) in choice_emoji
 
         react_emoji, react_user = await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
@@ -235,7 +233,9 @@ class HangedMan:
     def __init__(self) -> None:
         pass
 
-    async def action(self, bot: Bot, player_list, player: Player, channel: TextChannel) -> int:
+    async def action(
+        self, bot: Bot, player_list, player: Player, channel: TextChannel
+    ) -> int:
         await channel.send(
             f"あなた({player.name})は**__吊人__**(村人陣営)です。勝利条件は**自分が吊られること**です。"
             f"自分を人狼だと思わせ、自分が吊られることになったらあなた({player.name})の一人勝ちです。"
@@ -249,7 +249,7 @@ class HangedMan:
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            return user.id == player.id and str(reaction.emoji) == emoji_list[0]
+            return user.id == player.discord_id and str(reaction.emoji) == emoji_list[0]
 
         await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
