@@ -5,14 +5,10 @@ from discord.ext.commands import Bot, Cog, Context, command
 
 from games.const import DISCUSSION_TIME, GameStatusConst
 from games.werewolf_bot import WerewolfBot
-from setup_logger import setup_logger
-
-logger = setup_logger(__name__)
 
 
 class GameStatusCog(Cog):
     def __init__(self, bot: WerewolfBot):
-        logger.debug("GameStatusCogのinit")
         self.bot: WerewolfBot = bot
 
     @command(aliases=["cre", "c"])

@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import random
 import sys
-from logging import Logger
 from typing import List
 
 from discord import Role, utils
@@ -13,9 +12,6 @@ from games.const import GameStatusConst, SideConst
 from games.gamerole import GameRole
 from games.player import Player
 from games.roles import FortuneTeller, HangedMan, simple
-from setup_logger import setup_logger
-
-logger: Logger = setup_logger(__name__)
 
 
 class Game:
@@ -23,7 +19,6 @@ class Game:
     discussion_time: int
 
     def __init__(self) -> None:
-        logger.debug("Gameクラス init")
         self.status: str = GameStatusConst.NOTHING.value
         self.player_list: List[Player] = []
 
@@ -164,7 +159,7 @@ class Game:
         role_class_list = random.sample(before_role_class_list, n + 2)
         role_list = []
         for role in role_class_list:
-            role_list.append(role(self.player_list))
+            role_list.append(role(ctx))
 
         # 鍵チャンネルへの権限を設定
         await self.set_channel_role(ctx)
@@ -225,7 +220,7 @@ class Game:
         for player in self.player_list:
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
             role_action_list.append(
-                asyncio.create_task(player.game_role.vote(ctx, player, player.channel))
+                asyncio.create_task(player.vote(ctx, self.player_list, player.channel))
             )
 
         # リアクションチェック用
@@ -302,23 +297,18 @@ class Game:
         """一番投票されたプレイヤを返す"""
         # 投票された数とゲーム終了後の役職を取得
         voted_list: List[Player] = [x.vote_count for x in player_list]
-        logger.debug(f"{voted_list=}")
 
         sorted_voted_list = []
         # 並び替えするために、取得した二つのリストを二次元配列にする
         for voted, player in zip(voted_list, player_list):
             sorted_voted_list.append((voted, player))
 
-        logger.debug(f"{sorted_voted_list=}")
         list.sort(sorted_voted_list, key=lambda x: x[0], reverse=True)
-        logger.debug(f"{sorted_voted_list=}")
 
         # 最多投票数
         most_voted_num: int = sorted_voted_list[0][0]
-        logger.debug(f"{most_voted_num=}")
 
         # 最多投票数以外を除外
         voted_list = [x[1] for x in sorted_voted_list if x[0] == most_voted_num]
-        logger.debug(f"{voted_list=}")
 
         return voted_list

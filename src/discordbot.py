@@ -1,20 +1,14 @@
 import os
-from logging import Logger
 
 from discord.ext.commands import Context, command
 
 from games.game import Game
 from games.werewolf_bot import WerewolfBot
-from setup_logger import setup_logger
 
 
 def main() -> None:
-    logger: Logger = setup_logger(__name__)
-    logger.info("START")
-
     # 接頭辞を「;」に設定
     bot: WerewolfBot = WerewolfBot(Game())
-    logger.debug(bot)
 
     # 環境変数DISCORD_BOT_TOKENからBOTのトークンを取得
     token = os.environ["DISCORD_BOT_TOKEN"]

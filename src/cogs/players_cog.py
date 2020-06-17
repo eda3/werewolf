@@ -6,9 +6,6 @@ from discord.member import Member
 from games.const import GameStatusConst, emoji_list
 from games.player import Player
 from games.werewolf_bot import WerewolfBot
-from setup_logger import setup_logger
-
-logger = setup_logger(__name__)
 
 
 class PlayersCog(Cog):

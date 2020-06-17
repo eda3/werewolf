@@ -8,24 +8,22 @@ from games.const import SideConst, emoji_list
 from games.gamerole import GameRole
 from games.player import Player
 
-# from games.werewolf_bot import WerewolfBot
-from setup_logger import setup_logger
-
-logger = setup_logger(__name__)
+from games.werewolf_bot import WerewolfBot
 
 
-class Villager(GameRole):
+class Villager:
     """村人"""
 
     name = ":man:村人"
 
     def __init__(self, bot: Bot) -> None:
-        super().__init__(bot)
         self.bot = bot
         self.name = Villager.name
         self.side = SideConst.WHITE
 
-    async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
+    @staticmethod
+    async def action(ctx: Context, player: Player, channel: TextChannel) -> int:
+
         await channel.send(
             "あなたは**__村人__**です。特殊な能力はありません。"
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
@@ -37,20 +35,23 @@ class Villager(GameRole):
 
         def my_check(reaction: Reaction, user: Member) -> bool:
             member = utils.get(ctx.bot.get_all_members(), id=player.id)
-            return user.id == member.id and str(reaction.emoji) == emoji_list[0]
+
+            is_my_check: bool = (user.id == member.id) and (
+                str(reaction.emoji) == emoji_list[0]
+            )
+            return is_my_check
 
         await ctx.bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
         return 1
 
 
-class Werewolf(GameRole):
+class Werewolf:
     """人狼"""
 
     name: str = ":wolf:人狼"
 
     def __init__(self, bot: Bot) -> None:
-        super().__init__(bot)
         self.bot = bot
         self.name = Werewolf.name
         self.side = SideConst.BLACK
@@ -60,6 +61,7 @@ class Werewolf(GameRole):
 
         # リストから人狼一覧を抽出
         player_list: List[Player] = ctx.bot.game.player_list
+
         werewolf_list: List[str] = []
         for p in player_list:
             if p.game_role.name == Werewolf.name:
@@ -90,16 +92,15 @@ class Werewolf(GameRole):
         return 1
 
 
-class FortuneTeller(GameRole):
+class FortuneTeller:
     """占い師"""
 
     name: str = ":mage:占い師"
 
     def __init__(self, bot: Bot) -> None:
-        super().__init__(bot)
-        self.bot = bot
-        self.name = FortuneTeller.name
-        self.side = SideConst.WHITE
+        self.bot: Werewolf = bot
+        self.name: str = FortuneTeller.name
+        self.side: str = SideConst.WHITE
         # 墓場にあるカード
         self.grave_role_list: List[GameRole] = []
 
@@ -109,8 +110,10 @@ class FortuneTeller(GameRole):
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。占う人物を選択してください。"
         )
 
+        player_list: List[Player] = ctx.bot.game.player_list
+
         # 占い対象を選択
-        choice = await self.fortune_telling(self.bot, ctx, player, channel)
+        choice = await self.fortune_telling(player_list, ctx, player, channel)
 
         # プレイヤーを選択した場合
         if isinstance(choice, Player):
@@ -122,11 +125,11 @@ class FortuneTeller(GameRole):
         return 1
 
     async def fortune_telling(
-        self, bot: Bot, ctx: Context, player: Player, channel: TextChannel
+        self, player_list, ctx: Context, player: Player, channel: TextChannel
     ) -> Player:
 
         # 対象を選択
-        p_list = [x for x in bot if x is not player]
+        p_list = [x for x in player_list if x is not player]
 
         text: str = ""
         choice_emoji: List[Emoji] = []
@@ -165,13 +168,12 @@ class FortuneTeller(GameRole):
             return p_list[p_idx]
 
 
-class Thief(GameRole):
+class Thief:
     """怪盗"""
 
     name = ":supervillain:怪盗"
 
     def __init__(self, bot: Bot) -> None:
-        super().__init__(bot)
         self.bot = bot
         self.name = Thief.name
         self.side = SideConst.WHITE
@@ -182,8 +184,10 @@ class Thief(GameRole):
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
         )
 
+        player_list: List[Player] = ctx.bot.game.player_list
+
         # 役職交換する自分以外のプレイヤーを選択
-        choice_player = await select_player(self.bot, ctx, player, channel)
+        choice_player = await select_player(player_list, ctx, player, channel)
 
         # 選択プレイヤーと自分の役職を交換
         temp_role = player.game_role
@@ -200,10 +204,10 @@ class Thief(GameRole):
 
 
 async def select_player(
-    bot: Bot, ctx: Context, player: Player, channel: TextChannel
+    player_list: List[Player], ctx: Context, player: Player, channel: TextChannel
 ) -> Player:
     # 対象を選択
-    p_list = [x for x in bot if x is not player]
+    p_list = [x for x in player_list if x is not player]
     text: str = ""
     choice_emoji: List[Emoji] = []
     for emoji, p in zip(emoji_list, p_list):
@@ -232,13 +236,12 @@ async def select_player(
     return p_list[p_idx]
 
 
-class HangedMan(GameRole):
+class HangedMan:
     """吊人"""
 
     name: str = ":upside_down:吊人"
 
     def __init__(self, bot: Bot) -> None:
-        super().__init__(bot)
         self.bot = bot
         self.name = HangedMan.name
         self.side = SideConst.WHITE
