@@ -159,7 +159,7 @@ class Game:
         role_class_list = random.sample(before_role_class_list, n + 2)
         role_list = []
         for role in role_class_list:
-            role_list.append(role(ctx))
+            role_list.append(role())
 
         # 鍵チャンネルへの権限を設定
         await self.set_channel_role(ctx)
@@ -202,7 +202,9 @@ class Game:
             # wait_for()含む処理を並列に動かすため、各役職のアクションメソッドをリストに入れる
             role_action_list.append(
                 asyncio.create_task(
-                    player.game_role.action(ctx, player, player.channel)
+                    player.game_role.action(
+                        ctx.bot, self.player_list, player, player.channel
+                    )
                 )
             )
 

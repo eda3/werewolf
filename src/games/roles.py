@@ -17,7 +17,7 @@ class Villager:
     name = ":man:村人"
 
     def __init__(self, bot: Bot) -> None:
-        self.bot = bot
+        self.bot: Werewolf = bot
         self.name = Villager.name
         self.side = SideConst.WHITE
 
@@ -52,7 +52,7 @@ class Werewolf:
     name: str = ":wolf:人狼"
 
     def __init__(self, bot: Bot) -> None:
-        self.bot = bot
+        self.bot: Werewolf = bot
         self.name = Werewolf.name
         self.side = SideConst.BLACK
 
@@ -129,13 +129,13 @@ class FortuneTeller:
     ) -> Player:
 
         # 対象を選択
-        p_list = [x for x in player_list if x is not player]
+        player_list = [x for x in player_list if x is not player]
 
         text: str = ""
         choice_emoji: List[Emoji] = []
-        for i in range(len(p_list)):
+        for i in range(len(player_list)):
             choice_emoji.append(emoji_list[i])
-            text += f"{emoji_list[i]} {p_list[i].name}"
+            text += f"{emoji_list[i]} {player_list[i].name}"
 
         # 一番最後に墓場用の絵文字を追加
         i = i + 1
@@ -162,37 +162,36 @@ class FortuneTeller:
             if emoji == react_emoji.emoji:
                 p_idx = i
 
-        if len(p_list) == p_idx:
+        if len(player_list) == p_idx:
             return self.grave_role_list
         else:
-            return p_list[p_idx]
+            return player_list[p_idx]
 
 
 class Thief:
     """怪盗"""
 
-    name = ":supervillain:怪盗"
+    name: str = ":supervillain:怪盗"
+    side: str = SideConst.WHITE
 
-    def __init__(self, bot: Bot) -> None:
-        self.bot = bot
-        self.name = Thief.name
-        self.side = SideConst.WHITE
+    def __init__(self) -> None:
+        pass
 
-    async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
+    async def action(
+        self, bot: Bot, player_list, player: Player, channel: TextChannel
+    ) -> int:
         await channel.send(
             "あなたは**__怪盗__**(村人陣営)です。特定の人の役職と自分の役職をすりかえることが出来ます。"
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。"
         )
 
-        player_list: List[Player] = ctx.bot.game.player_list
-
         # 役職交換する自分以外のプレイヤーを選択
-        choice_player = await select_player(player_list, ctx, player, channel)
+        choice_player = await self.select_player(bot, player_list, player, channel)
 
         # 選択プレイヤーと自分の役職を交換
-        temp_role = player.game_role
-        player.after_game_role = choice_player.game_role
-        choice_player.after_game_role = temp_role
+        temp_role: GameRole = player.game_role
+        player.after_game_role: GameRole = choice_player.game_role
+        choice_player.after_game_role: GameRole = temp_role
 
         await channel.send(
             f"あなたは{choice_player.name}と役職交換しました。\n"
@@ -202,38 +201,36 @@ class Thief:
         )
         return 1
 
+    @staticmethod
+    async def select_player(
+        bot: Bot, player_list: List[Player], player: Player, channel: TextChannel
+    ) -> Player:
 
-async def select_player(
-    player_list: List[Player], ctx: Context, player: Player, channel: TextChannel
-) -> Player:
-    # 対象を選択
-    p_list = [x for x in player_list if x is not player]
-    text: str = ""
-    choice_emoji: List[Emoji] = []
-    for emoji, p in zip(emoji_list, p_list):
-        choice_emoji.append(emoji)
-        text += f"{emoji} {p.name}"
-    await channel.send(text)
+        text: str = ""
+        choice_emoji: List[Emoji] = []
+        for emoji, player in zip(emoji_list, player_list):  # type: Emoji, Player
+            choice_emoji.append(emoji)
+            text += f"{emoji} {player.name}"
+        await channel.send(text)
 
-    m_id: int = channel.last_message_id
-    last_message: Message = await channel.fetch_message(m_id)
-    for emoji in choice_emoji:
-        await last_message.add_reaction(emoji)
+        m_id: int = channel.last_message_id
+        last_message: Message = await channel.fetch_message(m_id)
+        for emoji in choice_emoji:  # type: Emoji
+            await last_message.add_reaction(emoji)
 
-    def my_check(reaction: Reaction, user: Member) -> bool:
-        member = utils.get(ctx.bot.get_all_members(), id=player.id)
-        return user.id == member.id and str(reaction.emoji) in choice_emoji
+        def my_check(reaction: Reaction, user: Member) -> bool:
+            return user.id == player.id and str(reaction.emoji) in choice_emoji
 
-    react_emoji, react_user = await ctx.bot.wait_for("reaction_add", check=my_check)
-    await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
+        react_emoji, react_user = await bot.wait_for("reaction_add", check=my_check)
+        await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
 
-    # リアクション絵文字から、プレイヤを逆引き
-    p_idx = 0
-    for i, emoji in enumerate(choice_emoji):
-        if emoji == react_emoji.emoji:
-            p_idx = i
+        # リアクション絵文字から、プレイヤを逆引き
+        p_idx: int = 0
+        for i, emoji in enumerate(choice_emoji):  # type: int, Emoji
+            if emoji == react_emoji.emoji:
+                p_idx = i
 
-    return p_list[p_idx]
+        return player_list[p_idx]
 
 
 class HangedMan:
@@ -272,7 +269,8 @@ simple = {
     # 2: 村占盗狼
     2: [Villager, FortuneTeller, Thief, Werewolf],
     # 3: 村村占狼盗
-    3: [Villager, Villager, FortuneTeller, Thief, Werewolf],
+    # 3: [Villager, Villager, FortuneTeller, Thief, Werewolf],
+    3: [Thief, Thief, Thief, Thief, Thief],
     # 4: 村村占狼狼盗
     4: [Villager, Villager, FortuneTeller, Thief, Werewolf, Werewolf],
     # 5: 村村占狼狼盗吊
