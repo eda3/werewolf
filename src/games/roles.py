@@ -14,15 +14,16 @@ from games.werewolf_bot import WerewolfBot
 class Villager:
     """村人"""
 
-    name = ":man:村人"
+    name: str = ":man:村人"
+    side: str = SideConst.WHITE
 
-    def __init__(self, bot: Bot) -> None:
-        self.bot: Werewolf = bot
-        self.name = Villager.name
-        self.side = SideConst.WHITE
+    def __init__(self) -> None:
+        pass
 
     @staticmethod
-    async def action(ctx: Context, player: Player, channel: TextChannel) -> int:
+    async def action(
+        bot: Bot, player_list, player: Player, channel: TextChannel
+    ) -> int:
 
         await channel.send(
             "あなたは**__村人__**です。特殊な能力はありません。"
@@ -34,14 +35,9 @@ class Villager:
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            member = utils.get(ctx.bot.get_all_members(), id=player.id)
+            return user.id == player.id and reaction.emoji == emoji_list[0]
 
-            is_my_check: bool = (user.id == member.id) and (
-                str(reaction.emoji) == emoji_list[0]
-            )
-            return is_my_check
-
-        await ctx.bot.wait_for("reaction_add", check=my_check)
+        await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
         return 1
 
@@ -50,17 +46,16 @@ class Werewolf:
     """人狼"""
 
     name: str = ":wolf:人狼"
+    self: str = SideConst.BLACK
 
-    def __init__(self, bot: Bot) -> None:
-        self.bot: Werewolf = bot
-        self.name = Werewolf.name
-        self.side = SideConst.BLACK
+    def __init__(self) -> None:
+        pass
 
-    async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
+    @staticmethod
+    async def action(
+        bot: Bot, player_list: List[Player], player: Player, channel: TextChannel
+    ) -> int:
         await channel.send("あなたは:wolf:**__人狼__**(人狼陣営)です。\n")
-
-        # リストから人狼一覧を抽出
-        player_list: List[Player] = ctx.bot.game.player_list
 
         werewolf_list: List[str] = []
         for p in player_list:
@@ -84,10 +79,9 @@ class Werewolf:
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            member: Member = utils.get(ctx.bot.get_all_members(), id=player.id)
-            return user.id == member.id and str(reaction.emoji) == emoji_list[0]
+            return user.id == player.id and str(reaction.emoji) == emoji_list[0]
 
-        await ctx.bot.wait_for("reaction_add", check=my_check)
+        await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
         return 1
 
@@ -96,24 +90,24 @@ class FortuneTeller:
     """占い師"""
 
     name: str = ":mage:占い師"
+    side: str = SideConst.WHITE
 
-    def __init__(self, bot: Bot) -> None:
-        self.bot: Werewolf = bot
-        self.name: str = FortuneTeller.name
-        self.side: str = SideConst.WHITE
+    def __init__(self) -> None:
         # 墓場にあるカード
         self.grave_role_list: List[GameRole] = []
 
-    async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
+    async def action(
+        self, bot: Bot, player_list: List[Player], player: Player, channel: TextChannel
+    ) -> int:
         await channel.send(
             "あなたは**__占い師__**(村人陣営)です。特定の人を占い、村人陣営か人狼陣営か占うことができます"
             "村の中に潜む人狼を吊りあげ、勝利に導きましょう。占う人物を選択してください。"
         )
 
-        player_list: List[Player] = ctx.bot.game.player_list
+        player_list: List[Player] = bot.game.player_list
 
         # 占い対象を選択
-        choice = await self.fortune_telling(player_list, ctx, player, channel)
+        choice = await self.fortune_telling(bot, player_list, player, channel)
 
         # プレイヤーを選択した場合
         if isinstance(choice, Player):
@@ -125,7 +119,7 @@ class FortuneTeller:
         return 1
 
     async def fortune_telling(
-        self, player_list, ctx: Context, player: Player, channel: TextChannel
+        self, bot: Bot, player_list, player: Player, channel: TextChannel
     ) -> Player:
 
         # 対象を選択
@@ -150,10 +144,9 @@ class FortuneTeller:
             await last_message.add_reaction(emoji)
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            member = utils.get(ctx.bot.get_all_members(), id=player.id)
-            return user.id == member.id and str(reaction.emoji) in choice_emoji
+            return user.id == player.id and str(reaction.emoji) in choice_emoji
 
-        react_emoji, react_user = await ctx.bot.wait_for("reaction_add", check=my_check)
+        react_emoji, react_user = await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
 
         # リアクション絵文字から、プレイヤを逆引き
@@ -237,13 +230,12 @@ class HangedMan:
     """吊人"""
 
     name: str = ":upside_down:吊人"
+    side: str = SideConst.WHITE
 
-    def __init__(self, bot: Bot) -> None:
-        self.bot = bot
-        self.name = HangedMan.name
-        self.side = SideConst.WHITE
+    def __init__(self) -> None:
+        pass
 
-    async def action(self, ctx: Context, player: Player, channel: TextChannel) -> int:
+    async def action(self, bot: Bot, player_list, player: Player, channel: TextChannel) -> int:
         await channel.send(
             f"あなた({player.name})は**__吊人__**(村人陣営)です。勝利条件は**自分が吊られること**です。"
             f"自分を人狼だと思わせ、自分が吊られることになったらあなた({player.name})の一人勝ちです。"
@@ -257,10 +249,9 @@ class HangedMan:
         await last_message.add_reaction(emoji_list[0])
 
         def my_check(reaction: Reaction, user: Member) -> bool:
-            member = utils.get(ctx.bot.get_all_members(), id=player.id)
-            return user.id == member.id and str(reaction.emoji) == emoji_list[0]
+            return user.id == player.id and str(reaction.emoji) == emoji_list[0]
 
-        await ctx.bot.wait_for("reaction_add", check=my_check)
+        await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{player.name}が {emoji_list[0]} を押したのを確認しました")
         return 1
 
@@ -270,9 +261,10 @@ simple = {
     2: [Villager, FortuneTeller, Thief, Werewolf],
     # 3: 村村占狼盗
     # 3: [Villager, Villager, FortuneTeller, Thief, Werewolf],
-    3: [Thief, Thief, Thief, Thief, Thief],
+    3: [Villager, Villager, Villager, Werewolf, Werewolf],
     # 4: 村村占狼狼盗
-    4: [Villager, Villager, FortuneTeller, Thief, Werewolf, Werewolf],
+    # 4: [Villager, Villager, FortuneTeller, Thief, Werewolf, Werewolf],
+    4: [HangedMan, Villager, FortuneTeller, Thief, Werewolf, Werewolf],
     # 5: 村村占狼狼盗吊
     5: [Villager, Villager, FortuneTeller, Thief, Werewolf, Werewolf, HangedMan],
     # 6:村村村占狼狼盗吊
