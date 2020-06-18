@@ -181,14 +181,19 @@ class Thief:
 
         # 選択プレイヤーと自分の役職を交換
         temp_role: GameRole = player.game_role
-        player.after_game_role: GameRole = choice_player.game_role
-        choice_player.after_game_role: GameRole = temp_role
+        player.after_game_role = choice_player.game_role
+        choice_player.after_game_role = temp_role
 
+        # メッセージ送信用にプレイヤー名と役職名を取得
+        choice_player_name: str = choice_player.game_role.name
+        choice_player_game_role: str = choice_player.game_role.name
+        choice_player_after_game_role: str = choice_player.after_game_role.name
+        player_game_role_name: str = player.after_game_role.name
         await channel.send(
-            f"あなたは{choice_player.name}と役職交換しました。\n"
-            f"{choice_player.name}の役職は{choice_player.game_role.name}でした。\n"
-            f"{choice_player.name}の現在の役職は{choice_player.after_game_role.name}です。\n"
-            f"あなたの現在の役職は{player.after_game_role.name}です。"
+            f"あなたは{choice_player_name}と役職交換しました。\n"
+            f"{choice_player_name}の役職は{choice_player_game_role}でした。\n"
+            f"{choice_player_name}の現在の役職は{choice_player_after_game_role}です。\n"
+            f"あなたの現在の役職は{player_game_role_name}です。"
         )
         return 1
 
