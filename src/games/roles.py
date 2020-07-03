@@ -275,8 +275,8 @@ simple = {
     # 2: 村占盗狼
     2: [Villager, FortuneTeller, Thief, Werewolf],
     # 3: 村村占狼盗
-    # 3: [Villager, Villager, FortuneTeller, Thief, Werewolf],
-    3: [Villager, Villager, Villager, Werewolf, Werewolf],
+    3: [Villager, Villager, FortuneTeller, Thief, Werewolf],
+    # 3: [Villager, Villager, Villager, Werewolf, Werewolf],
     # 4: 村村占狼狼盗
     # 4: [Villager, Villager, FortuneTeller, Thief, Werewolf, Werewolf],
     4: [HangedMan, Villager, FortuneTeller, Thief, Werewolf, Werewolf],
