@@ -143,10 +143,8 @@ class FortuneTeller:
         for emoji in choice_emoji:
             await last_message.add_reaction(emoji)
 
-        def my_check(reaction: Reaction, user: Member) -> bool:
-            check1: bool = user.id == player.discord_id
-            check2: bool = reaction.emoji == emoji_list[0]
-            return check1 and check2
+        def my_check(user: Member) -> bool:
+            return user.id == player.discord_id
 
         react_emoji, react_user = await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
@@ -220,10 +218,8 @@ class Thief:
         for emoji in choice_emoji:
             await last_message.add_reaction(emoji)
 
-        def my_check(reaction: Reaction, user: Member) -> bool:
-            check1: bool = user.id == player.discord_id
-            check2: bool = reaction.emoji == emoji_list[0]
-            return check1 and check2
+        def my_check(user: Member) -> bool:
+            return user.id == player.discord_id
 
         react_emoji, react_user = await bot.wait_for("reaction_add", check=my_check)
         await channel.send(f"{react_user.name}が {react_emoji.emoji} を押したのを確認しました")
